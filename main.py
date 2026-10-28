@@ -6,13 +6,22 @@ backgroundColor = "#151923"
 elementColor = "#252D3D"
 #la liste des cubes est cubes=[2,4,8,16,32,64,128,256,512,1024,2048,4096]
 
+grille = [[],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          ]
+
 
 # Class et fonctions du jeu
-class Bloc:
-    pass
 
-class Grille:
-    pass
+
 
 class File:
     pass
@@ -121,7 +130,7 @@ prochain2 = Frame(prochain, bg=elementColor, height=100, width=100)
 prochain2.pack(pady=15)
 prochain2.pack_propagate(False)
 
-prochain2Label = Label(prochain2, text="4", font=("Verdana", 18, "bold"), bg="#FDAB68", fg="#FFFFFF")
+prochain2Label = Label(prochain2, text="2", font=("Verdana", 18, "bold"), bg="#FDAB68", fg="#FFFFFF")
 prochain2Label.pack(expand=True, fill=BOTH)
 
 # Troisième bloc
@@ -129,7 +138,7 @@ prochain3 = Frame(prochain, bg=elementColor, height=100, width=100)
 prochain3.pack(pady=15)
 prochain3.pack_propagate(False)
 
-prochain3Label = Label(prochain3, text="8", font=("Verdana", 18, "bold"), bg="#FE3939", fg="#FFFFFF")
+prochain3Label = Label(prochain3, text="16", font=("Verdana", 18, "bold"), bg="#FE3939", fg="#FFFFFF")
 prochain3Label.pack(expand=True, fill=BOTH)
 
 
@@ -176,6 +185,46 @@ def faireUneGrille(x, y, element):
 
 faireUneGrille(1, 7, lacherBloc)
 faireUneGrille(9, 7, grille)
+
+
+
+
+
+
+
+
+
+
+
+
+from bloc import Bloc
+
+bloc1 = Bloc(2)
+bloc2 = Bloc(2)
+print("Valeur initiale :", bloc1.valeur)
+print("Fusion réussie :", bloc1.fusionner(bloc2))
+print("Valeur finale :", bloc1.valeur)
+print("Nouvelle couleur :", bloc1.couleur)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Lancer la fenetre
