@@ -25,7 +25,7 @@ class File:
         prochain1.pack(pady=15)
         prochain1.pack_propagate(False)
 
-        prochain1Label = Label(prochain1, text=str(self.file[0]), font=("Verdana", 18, "bold"), bg=Bloc(self.file), fg="#FFFFFF")
+        prochain1Label = Label(prochain1, text=str(self.file[0]), font=("Verdana", 18, "bold"), bg=Bloc(self.file[0]).couleur(), fg="#FFFFFF")
         prochain1Label.pack(expand=True, fill=BOTH)
 
         # Deuxième bloc
@@ -33,7 +33,7 @@ class File:
         prochain2.pack(pady=15)
         prochain2.pack_propagate(False)
 
-        prochain2Label = Label(prochain2, text=str(self.file[1]), font=("Verdana", 18, "bold"), bg="#FDAB68", fg="#FFFFFF")
+        prochain2Label = Label(prochain2, text=str(self.file[1]), font=("Verdana", 18, "bold"), bg=Bloc(self.file[1]).couleur(), fg="#FFFFFF")
         prochain2Label.pack(expand=True, fill=BOTH)
 
         # Troisième bloc
@@ -41,5 +41,5 @@ class File:
         prochain3.pack(pady=15)
         prochain3.pack_propagate(False)
 
-        prochain3Label = Label(prochain3, text=self.file[2], font=("Verdana", 18, "bold"), bg="#FE3939", fg="#FFFFFF")
+        prochain3Label = Label(prochain3, text=self.file[2], font=("Verdana", 18, "bold"), bg=Bloc(self.file[2]).couleur(), fg="#FFFFFF")
         prochain3Label.pack(expand=True, fill=BOTH)
