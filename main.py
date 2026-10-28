@@ -1,5 +1,3 @@
-## Test en vif
-
 import random
 from tkinter import *
 
@@ -31,11 +29,6 @@ fenetre.title("Suika 2048")
 fenetre.geometry("950x900")
 fenetre.configure(bg=backgroundColor)
 fenetre.resizable(0, 0)  # Empeche le redimensionnement de la fenetre
-
-
-# Elements de la page
-# title = Label(fenetre, text="Suika 2048", font=("Arial", 28, "bold"), bg=backgroundColor, fg="#FFFFFF")
-# title.pack()
 
 
 ##############
