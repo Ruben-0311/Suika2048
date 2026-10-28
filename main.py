@@ -5,13 +5,22 @@ from tkinter import *
 backgroundColor = "#151923"
 elementColor = "#252D3D"
 
+grille = [[],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          [],[],[],[],[],[],[],
+          ]
+
 
 # Class et fonctions du jeu
-class Bloc:
-    pass
 
-class Grille:
-    pass
+
 
 class File:
     pass
@@ -104,7 +113,7 @@ titreLabel.pack(pady=10)
 ############################################
 # Zone avec les prochains blocs de la file #
 ############################################
-prochain = Frame(titreEtProchain, bg="#FF0000", height=660)
+prochain = Frame(titreEtProchain, bg=backgroundColor, height=660)
 prochain.pack(pady=10, side=BOTTOM, fill=BOTH, expand=True)
 
 # Premier bloc
@@ -112,7 +121,7 @@ prochain1 = Frame(prochain, bg=elementColor, height=100, width=100)
 prochain1.pack(pady=15)
 prochain1.pack_propagate(False)
 
-prochain1Label = Label(prochain1, text="prochain", font=("Verdana", 18, "bold"), bg="#FFDEDE", fg="#FFFFFF")
+prochain1Label = Label(prochain1, text="2", font=("Verdana", 18, "bold"), bg="#FFDEDE", fg="#FFFFFF")
 prochain1Label.pack(expand=True, fill=BOTH)
 
 # Deuxième bloc
@@ -120,7 +129,7 @@ prochain2 = Frame(prochain, bg=elementColor, height=100, width=100)
 prochain2.pack(pady=15)
 prochain2.pack_propagate(False)
 
-prochain2Label = Label(prochain2, text="surprochain", font=("Verdana", 18, "bold"), bg="#FDAB68", fg="#FFFFFF")
+prochain2Label = Label(prochain2, text="2", font=("Verdana", 18, "bold"), bg="#FDAB68", fg="#FFFFFF")
 prochain2Label.pack(expand=True, fill=BOTH)
 
 # Troisième bloc
@@ -128,7 +137,7 @@ prochain3 = Frame(prochain, bg=elementColor, height=100, width=100)
 prochain3.pack(pady=15)
 prochain3.pack_propagate(False)
 
-prochain3Label = Label(prochain3, text="sursurprochain", font=("Verdana", 18, "bold"), bg="#FE3939", fg="#FFFFFF")
+prochain3Label = Label(prochain3, text="16", font=("Verdana", 18, "bold"), bg="#FE3939", fg="#FFFFFF")
 prochain3Label.pack(expand=True, fill=BOTH)
 
 
@@ -175,6 +184,46 @@ def faireUneGrille(x, y, element):
 
 faireUneGrille(1, 7, lacherBloc)
 faireUneGrille(9, 7, grille)
+
+
+
+
+
+
+
+
+
+
+
+
+from bloc import Bloc
+
+bloc1 = Bloc(2)
+bloc2 = Bloc(2)
+print("Valeur initiale :", bloc1.valeur)
+print("Fusion réussie :", bloc1.fusionner(bloc2))
+print("Valeur finale :", bloc1.valeur)
+print("Nouvelle couleur :", bloc1.couleur)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Lancer la fenetre
