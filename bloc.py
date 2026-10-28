@@ -4,9 +4,9 @@ class Bloc:
         self.saCouleur = self.couleur()
 
     def couleur(self):
-        if self.valeur == 0:
+        if self.valeur == "":
             return "#151923"
-        if self.valeur == 2:
+        elif self.valeur == 2:
             return "#EEE4DA"
         elif self.valeur == 4:
             return "#EDE0C8"
@@ -38,6 +38,6 @@ class Bloc:
             return False
 
     def suprrimer(self):
-        self.valeur = 0
+        self.valeur = ""
         self.saCouleur = self.couleur()
         

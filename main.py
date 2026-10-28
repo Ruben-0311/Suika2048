@@ -17,7 +17,6 @@ grille = [[],[],[],[],[],[],[],
           [],[],[],[],[],[],[],
           ]
 
-
 # Class et fonctions du jeu
 
 
@@ -184,45 +183,6 @@ def faireUneGrille(x, y, element):
 
 faireUneGrille(1, 7, lacherBloc)
 faireUneGrille(9, 7, grille)
-
-
-
-
-
-
-
-
-
-
-
-
-from bloc import Bloc
-
-bloc1 = Bloc(2)
-bloc2 = Bloc(2)
-print("Valeur initiale :", bloc1.valeur)
-print("Fusion réussie :", bloc1.fusionner(bloc2))
-print("Valeur finale :", bloc1.valeur)
-print("Nouvelle couleur :", bloc1.couleur)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
