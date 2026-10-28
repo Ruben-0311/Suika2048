@@ -4,6 +4,7 @@ from tkinter import *
 # Variables utiles
 backgroundColor = "#151923"
 elementColor = "#252D3D"
+#la liste des cubes est cubes=[2,4,8,16,32,64,128,256,512,1024,2048,4096]
 
 grille = [[],[],[],[],[],[],[],
           [],[],[],[],[],[],[],
