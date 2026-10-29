@@ -2,29 +2,24 @@ import random
 from tkinter import *
 from file import File
 from bloc import *
+from jeu import Jeu
 
-# Variables utiles
+
+###################
+# Setup des class #
+listeProba = [2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32]
+listeprochain = File(listeProba)
+
+jeu = Jeu()
+print(jeu.get_grille_haut())
+###################
+
+
+####################
+# Variables utiles #
 backgroundColor = "#151923"
 elementColor = "#252D3D"
-#la liste des cubes est cubes=[2,4,8,16,32,64,128,256,512,1024,2048,4096]
-
-grille = [[],[],[],[],[],[],[],
-          [],[],[],[],[],[],[],
-          [],[],[],[],[],[],[],
-          [],[],[],[],[],[],[],
-          [],[],[],[],[],[],[],
-          [],[],[],[],[],[],[],
-          [],[],[],[],[],[],[],
-          [],[],[],[],[],[],[],
-          [],[],[],[],[],[],[],
-          [],[],[],[],[],[],[],
-          ]
-
-listeProba = [2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32]
-
-
-# Setup des class 
-listeprochain = File(listeProba)
+####################
 
 
 # Parametrage de la fenêtre
@@ -49,15 +44,15 @@ partieJeu = Frame(FrameGlobal, width=545, bg=backgroundColor)
 partieJeu.pack(padx=10, side=LEFT, fill=Y)
 
 # Frame du haut de la frame de gauche
-jeu = Frame(partieJeu, bg=backgroundColor, height=550)
-jeu.pack(side=TOP)
+Partiejeu = Frame(partieJeu, bg=backgroundColor, height=550)
+Partiejeu.pack(side=TOP)
 
 # Zone de lacher de bloc
-lacherBloc = Frame(jeu, bg=elementColor, height=65)
+lacherBloc = Frame(Partiejeu, bg=elementColor, height=65)
 lacherBloc.pack(pady=10, side=TOP, fill=X)
 
 # Grille du jeu
-grille = Frame(jeu, bg=backgroundColor)
+grille = Frame(Partiejeu, bg=backgroundColor)
 grille.pack(pady=10, side=BOTTOM, fill=BOTH, expand=True)
 
 
@@ -113,7 +108,7 @@ titreLabel.pack(pady=10)
 prochain = Frame(titreEtProchain, bg=backgroundColor, height=660)
 prochain.pack(pady=10, side=BOTTOM, fill=BOTH, expand=True)
 
-prochainTxt = Label(prochain, text="Prochain blocs :", font=("Arial", 14, "bold"), bg=backgroundColor, fg="#FFFFFF")
+prochainTxt = Label(prochain, text="Prochains blocs :", font=("Arial", 14, "bold"), bg=backgroundColor, fg="#FFFFFF")
 prochainTxt.pack(side=TOP, expand=True, anchor="w")
 
 # Premier bloc
@@ -121,7 +116,7 @@ prochain1 = Frame(prochain, bg=elementColor, height=100, width=100)
 prochain1.pack(pady=15)
 prochain1.pack_propagate(False)
 
-prochain1Label = Label(prochain1, text=listeprochain.file[0], font=("Verdana", 18, "bold"), bg=Bloc(listeprochain.file[0]).couleurBg(), fg=Bloc(listeprochain.file[0]).couleurFg())
+prochain1Label = Label(prochain1, text=listeprochain.file[1], font=("Verdana", 18, "bold"), bg=Bloc(listeprochain.file[1]).couleurBg(), fg=Bloc(listeprochain.file[1]).couleurFg())
 prochain1Label.pack(expand=True, fill=BOTH)
 
 # Deuxième bloc
@@ -129,7 +124,7 @@ prochain2 = Frame(prochain, bg=elementColor, height=100, width=100)
 prochain2.pack(pady=15)
 prochain2.pack_propagate(False)
 
-prochain2Label = Label(prochain2, text=listeprochain.file[1], font=("Verdana", 18, "bold"), bg=Bloc(listeprochain.file[1]).couleurBg(), fg=Bloc(listeprochain.file[1]).couleurFg())
+prochain2Label = Label(prochain2, text=listeprochain.file[2], font=("Verdana", 18, "bold"), bg=Bloc(listeprochain.file[2]).couleurBg(), fg=Bloc(listeprochain.file[2]).couleurFg())
 prochain2Label.pack(expand=True, fill=BOTH)
 
 # Troisième bloc
@@ -137,7 +132,7 @@ prochain3 = Frame(prochain, bg=elementColor, height=100, width=100)
 prochain3.pack(pady=15)
 prochain3.pack_propagate(False)
 
-prochain3Label = Label(prochain3, text=listeprochain.file[2], font=("Verdana", 18, "bold"), bg=Bloc(listeprochain.file[2]).couleurBg(), fg=Bloc(listeprochain.file[2]).couleurFg())
+prochain3Label = Label(prochain3, text=listeprochain.file[3], font=("Verdana", 18, "bold"), bg=Bloc(listeprochain.file[3]).couleurBg(), fg=Bloc(listeprochain.file[3]).couleurFg())
 prochain3Label.pack(expand=True, fill=BOTH)
 
 
@@ -151,7 +146,7 @@ score.pack(pady=10, side=TOP, fill=X)
 
 scoreLabel = Label(score, text="Score :", font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF")
 scoreLabel.pack(side=LEFT, pady=10, padx=10)
-
+Bloc(listeprochain.file[2]).couleurBg()
 scroreValeur = Label(score, text="8496", font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF")
 scroreValeur.pack(side=RIGHT, pady=10, padx=10)
 
@@ -167,25 +162,29 @@ meilleurScoreValeur = Label(meilleurScore, text="16542", font=("Verdana", 18, "b
 meilleurScoreValeur.pack(side=RIGHT, pady=10, padx=10)
 
 
-# Fonction pour creer une grille
-def faireUneGrille(x, y, element):
+
+def actualiser(x, y, elementGraphique, elementTableau):
     for i in range(x):
         for j in range(y):
-            bloc = Canvas(
-                element,
-                width=75,
-                height=75,
-                bg=backgroundColor,
-                highlightthickness=1,
-                highlightbackground=elementColor
-            )
+            # Couleurs par défaut comme case vide a chaques debut de boucle
+            couleurFond = backgroundColor
+            couleurTexte = "white"
+
+            if elementTableau[i][j] != "": # Si case pas vide on change ses couleurs
+                blocJeu = Bloc(elementTableau[i][j])
+                couleurFond = blocJeu.couleurBg()
+                couleurTexte = blocJeu.couleurFg()
+
+            bloc = Canvas(elementGraphique, width=75, height=75, bg=couleurFond, highlightthickness=1, highlightbackground=elementColor) # On applique le style
+
+            if elementTableau[i][j] != "":
+                bloc.create_text(37.5, 37.5, text=str(elementTableau[i][j]), font=("Inter", 25), fill=couleurTexte) #Pareil pour la couleur du texte
             bloc.grid(row=i, column=j)
 
-
-faireUneGrille(1, 7, lacherBloc)
-faireUneGrille(9, 7, grille)
-
+actualiser(1, 7, lacherBloc, [jeu.get_grille_haut()])
+actualiser(9, 7, grille, jeu.get_grille())
 
 
 # Lancer la fenetre
 fenetre.mainloop()
+
