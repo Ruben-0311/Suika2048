@@ -1,33 +1,43 @@
 class Bloc:
     def __init__(self, valeur):
         self.valeur = valeur
-        self.saCouleur = self.couleur()
+        self.saCouleur = self.couleurBg()
 
-    def couleur(self):
+    def couleurBg(self):
         if self.valeur == "":
             return "#151923"
         elif self.valeur == 2:
-            return "#EEE4DA"
+            return "#e5dbd1"
         elif self.valeur == 4:
-            return "#EDE0C8"
+            return "#e3d7c0"
         elif self.valeur == 8:
-            return "#F2B179"
+            return "#e9a974"
         elif self.valeur == 16:
-            return "#F59563"
+            return "#ec8e5f"
         elif self.valeur == 32:
-            return "#F67C5F"
+            return "#eb775b"
         elif self.valeur == 64:
-            return "#F65E3B"
+            return "#f56046"
         elif self.valeur == 128:
-            return "#EDCF72"
+            return "#ebcc72"
         elif self.valeur == 256:
-            return "#EDCC61"
+            return "#eac95f"
         elif self.valeur == 512:
-            return "#EDC850"
+            return "#e9c44d"
         elif self.valeur == 1024:
-            return "#EDC53F"
+            return "#eac140"
         elif self.valeur >= 2048:
-            return "#EDC22E"
+            return "#eac02e"
+
+    def couleurFg(self):
+        if self.valeur == "":
+            return "#FFFFFF"
+        elif self.valeur in (2, 4, 128, 256, 512, 1024, 2048):
+            return "#51483F"
+        elif self.valeur in (8, 16, 32, 64):
+            return "#FFFFFF"
+        elif self.valeur > 2048:
+            return "#51483F"
 
     def fusionner(self, bloc2):
         if self.valeur == bloc2.valeur:
