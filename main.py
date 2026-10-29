@@ -113,6 +113,9 @@ titreLabel.pack(pady=10)
 prochain = Frame(titreEtProchain, bg=backgroundColor, height=660)
 prochain.pack(pady=10, side=BOTTOM, fill=BOTH, expand=True)
 
+prochainTxt = Label(prochain, text="Prochain blocs :", font=("Arial", 14, "bold"), bg=backgroundColor, fg="#FFFFFF")
+prochainTxt.pack(side=TOP, expand=True, anchor="w")
+
 # Premier bloc
 prochain1 = Frame(prochain, bg=elementColor, height=100, width=100)
 prochain1.pack(pady=15)
