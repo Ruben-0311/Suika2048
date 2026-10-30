@@ -52,81 +52,54 @@ lacherBloc.pack(pady=10, side=TOP, fill=X)
 grille = Frame(hautJeu, bg=backgroundColor) # Grille du jeu
 grille.pack(pady=10, side=BOTTOM, fill=BOTH, expand=True)
 
-pouvoirs = Frame(partieJeu, bg=backgroundColor, height=150) # Compartiment des pouvoirs
+# Compartiment des pouvoirs
+pouvoirs = Frame(partieJeu, bg=backgroundColor, height=150)
 pouvoirs.pack(pady=10, side=TOP, fill=X)
-
-# Bouton 1
-pouvoir1 = Button(pouvoirs, text="Annuler", bg="#2B6FF6", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT)
+pouvoir1 = Button(pouvoirs, text="Annuler", bg="#2B6FF6", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT) # Bouton pouvoir 1
 pouvoir1.pack(padx=5, pady=10, side=LEFT, fill=X, expand=True)
-
-# Bouton 2
-pouvoir2 = Button(pouvoirs, text="Supprimer", bg="#E74C3C", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT)
+pouvoir2 = Button(pouvoirs, text="Supprimer", bg="#E74C3C", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT) # Bouton pouvoir 2
 pouvoir2.pack(padx=5, pady=10, side=LEFT, fill=X, expand=True)
-
-# Bouton 3
-pouvoir3 = Button(pouvoirs, text="Fusionner", bg="#E67E22", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT)
+pouvoir3 = Button(pouvoirs, text="Fusionner", bg="#E67E22", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT) # Bouton pouvoir 3
 pouvoir3.pack(padx=5, pady=10, side=LEFT, fill=X, expand=True)
-
-# Bouton 4
-pouvoir4 = Button(pouvoirs, text="Relancer", bg="#8E44AD", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT)
+pouvoir4 = Button(pouvoirs, text="Relancer", bg="#8E44AD", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT) # Bouton pouvoir 4
 pouvoir4.pack(padx=5, pady=10, side=LEFT, fill=X, expand=True)
-
-# Bouton 5
-pouvoir5 = Button(pouvoirs, text="Bombe", bg="#27AE60", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT)
+pouvoir5 = Button(pouvoirs, text="Bombe", bg="#27AE60", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT) # Bouton pouvoir 5
 pouvoir5.pack(padx=5, pady=10, side=LEFT, fill=X, expand=True)
 
 
-##################
-## Frame de droite
-##################
-partieAffichage = Frame(FrameGlobal, bg=backgroundColor)
+####### Frame de droite #######
+partieAffichage = Frame(FrameGlobal, bg=backgroundColor) # Frame de droite
 partieAffichage.pack(padx=10, side=RIGHT, fill=BOTH, expand=True)
 
-# Frame du haut de la frame de droite
-titreEtProchain = Frame(partieAffichage, bg=backgroundColor, height=500)
+titreEtProchain = Frame(partieAffichage, bg=backgroundColor, height=500) # Frame du haut de la frame de droite
 titreEtProchain.pack(side=TOP, fill=X)
 
-
-# Frame qui contient le titre
-titre = Frame(titreEtProchain, bg=elementColor, height=65)
+titre = Frame(titreEtProchain, bg=elementColor, height=65) # Frame qui contient le titre
 titre.pack(pady=10, side=TOP, fill=X)
-
-titreLabel = Label(titre, text="SuikaGame / 2048", font=("Verdana", 22, "bold"), bg=elementColor, fg="#FFFFFF")
+titreLabel = Label(titre, text="SuikaGame / 2048", font=("Verdana", 22, "bold"), bg=elementColor, fg="#FFFFFF") # Titre en lui meme
 titreLabel.pack(pady=10)
 
-
-############################################
-# Zone avec les prochains blocs de la file #
-############################################
-
-
+# Zone avec les prochains blocs de la file
 prochain = Frame(titreEtProchain, bg=backgroundColor, height=660)
 prochain.pack(pady=10, side=BOTTOM, fill=BOTH, expand=True)
-
-prochainTxt = Label(prochain, text="Prochains blocs :", font=("Arial", 14, "bold"), bg=backgroundColor, fg="#FFFFFF")
+prochainTxt = Label(prochain, text="Prochains blocs :", font=("Arial", 14, "bold"), bg=backgroundColor, fg="#FFFFFF") # Texte pour expliquer la zone
 prochainTxt.pack(side=TOP, expand=True, anchor="w")
 
-# Premier bloc
-prochain1 = Frame(prochain, bg=elementColor, height=100, width=100)
+prochain1 = Frame(prochain, bg=elementColor, height=100, width=100) # Premier prochain bloc
 prochain1.pack(pady=15)
 prochain1.pack_propagate(False)
-
-prochain1Label = Label(prochain1, text=listeprochain.file[1], font=("Verdana", 18, "bold"), bg=Bloc(listeprochain.file[1]).couleurBg(), fg=Bloc(listeprochain.file[1]).couleurFg())
+prochain1Label = Label(prochain1, text=listeprochain.file[1], font=("Verdana", 18, "bold"), bg=Bloc(listeprochain.file[1]).couleurBg(), fg=Bloc(listeprochain.file[1]).couleurFg()) # Texte de ce prochain bloc
 prochain1Label.pack(expand=True, fill=BOTH)
 
-# Deuxième bloc
-prochain2 = Frame(prochain, bg=elementColor, height=100, width=100)
+prochain2 = Frame(prochain, bg=elementColor, height=100, width=100) # Second prochain bloc
 prochain2.pack(pady=15)
 prochain2.pack_propagate(False)
-
 prochain2Label = Label(prochain2, text=listeprochain.file[2], font=("Verdana", 18, "bold"), bg=Bloc(listeprochain.file[2]).couleurBg(), fg=Bloc(listeprochain.file[2]).couleurFg())
 prochain2Label.pack(expand=True, fill=BOTH)
 
-# Troisième bloc
-prochain3 = Frame(prochain, bg=elementColor, height=100, width=100)
+prochain3 = Frame(prochain, bg=elementColor, height=100, width=100) # Troisieme prochain bloc
 prochain3.pack(pady=15)
 prochain3.pack_propagate(False)
-
 prochain3Label = Label(prochain3, text=listeprochain.file[3], font=("Verdana", 18, "bold"), bg=Bloc(listeprochain.file[3]).couleurBg(), fg=Bloc(listeprochain.file[3]).couleurFg())
 prochain3Label.pack(expand=True, fill=BOTH)
 
@@ -135,25 +108,19 @@ prochain3Label.pack(expand=True, fill=BOTH)
 scoreGlobal = Frame(partieAffichage, bg=backgroundColor, height=150)
 scoreGlobal.pack(side=BOTTOM, fill=X)
 
-# Score actuel
-score = Frame(scoreGlobal, bg="#2B6FF6", height=65)
+# score actuel 
+score = Frame(scoreGlobal, bg="#2B6FF6", height=65) # Score actuel
 score.pack(pady=10, side=TOP, fill=X)
-
-scoreLabel = Label(score, text="Score :", font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF")
+scoreLabel = Label(score, text="Score :", font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF") # Texte gauche 
 scoreLabel.pack(side=LEFT, pady=10, padx=10)
-Bloc(listeprochain.file[2]).couleurBg()
-scroreValeur = Label(score, text="8496", font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF")
+scroreValeur = Label(score, text="8496", font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF") # Texte droite
 scroreValeur.pack(side=RIGHT, pady=10, padx=10)
-
-
 # Meilleur score
 meilleurScore = Frame(scoreGlobal, bg="#2B6FF6", height=65)
 meilleurScore.pack(pady=10, side=TOP, fill=X)
-
-meilleurScoreLabel = Label(meilleurScore, text="Best score :", font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF")
-meilleurScoreLabel.pack(side=LEFT, pady=10, padx=10)
-
-meilleurScoreValeur = Label(meilleurScore, text="16542", font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF")
+meilleurScoreLabel = Label(meilleurScore, text="Best score :", font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF") # Texte gauche 
+meilleurScoreLabel.pack(side=LEFT, pady=10, padx=10)                                                                     
+meilleurScoreValeur = Label(meilleurScore, text="16542", font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF") # Texte droite 
 meilleurScoreValeur.pack(side=RIGHT, pady=10, padx=10)
 
 
