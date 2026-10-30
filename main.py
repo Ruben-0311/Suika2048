@@ -1,4 +1,4 @@
-#test pour aesir
+#c'est bon j'ai compris
 
 import random
 from tkinter import *
