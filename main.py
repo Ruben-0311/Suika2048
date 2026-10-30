@@ -1,5 +1,3 @@
-#c'est bon j'ai compris
-
 import random
 from tkinter import *
 from file import File
@@ -14,6 +12,10 @@ listeprochain = File(listeProba)
 
 jeu = Jeu()
 print(jeu.get_grille_haut())
+
+colonneSelectionnee = 3
+valeurBloc = jeu.get_grille_haut()[3]
+casesHaut = []
 ###################
 
 
@@ -183,10 +185,33 @@ def actualiser(x, y, elementGraphique, elementTableau):
                 bloc.create_text(37.5, 37.5, text=str(elementTableau[i][j]), font=("Inter", 25), fill=couleurTexte) #Pareil pour la couleur du texte
             bloc.grid(row=i, column=j)
 
-actualiser(1, 7, lacherBloc, [jeu.get_grille_haut()])
+def actualiserHaut():
+    for j in range(7):
+        case = casesHaut[j]
+        case.delete("all")
+        case.configure(bg=backgroundColor)
+
+        if j == colonneSelectionnee:
+            bloc = Bloc(valeurBloc)
+            case.configure(bg=bloc.couleurBg())
+            case.create_text(37.5, 37.5, text=str(valeurBloc), font=("Inter", 25), fill=bloc.couleurFg())
+
+def choisirColonne(colonne):
+    global colonneSelectionnee
+    colonneSelectionnee = colonne
+    actualiserHaut()
+
+
+for j in range(7):
+    case = Canvas(lacherBloc, width=75, height=75, bg=backgroundColor, highlightthickness=1, highlightbackground=elementColor)
+    case.grid(row=0, column=j)
+    # Détection du survol de la souris
+    case.bind("<Enter>", lambda event, col=j: choisirColonne(col))
+    casesHaut.append(case)
+
+
+
+actualiserHaut()
 actualiser(9, 7, grille, jeu.get_grille())
-
-
 # Lancer la fenetre
 fenetre.mainloop()
-

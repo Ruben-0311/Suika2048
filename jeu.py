@@ -10,7 +10,7 @@ class Jeu:
 
         # Grille du haut 1 par 7
         self.grilleHaut = ["" for i in range(7)]
-        self.grilleHaut[0] = random.choice(listeProba)
+        self.grilleHaut[3] = random.choice(listeProba)
 
 
     def get_grille(self):
