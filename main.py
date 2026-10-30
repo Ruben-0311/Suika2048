@@ -1,20 +1,21 @@
+###########
+# Imports #
 import random
 from tkinter import *
 from file import File
 from bloc import *
 from jeu import Jeu
+###########
 
 
 ###################
 # Setup des class #
-listeProba = [2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32]
-listeprochain = File(listeProba)
+listeProba = [2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32] # Creations de
+listeprochain = File(listeProba)                                                # la file
 
-jeu = Jeu()
-print(jeu.get_grille_haut())
-
-colonneSelectionnee = 3
-valeurBloc = jeu.get_grille_haut()[3]
+jeu = Jeu()                             # Mise en place de la classe Jeu
+colonneSelectionnee = 0 # Choix de la colone dans laquelle apparait le 1e bloc dans la zone de lacher
+valeurBloc = jeu.DonnerGrilleHaut()[0] # Recupere la valeur du prochain bloc qui va tomber
 casesHaut = []
 ###################
 
@@ -35,33 +36,23 @@ fenetre.resizable(0, 0)  # Empeche le redimensionnement de la fenetre
 
 
 ##############
-# Global frame (contient tout le reste)
-##############
-FrameGlobal = Frame(fenetre, bg=backgroundColor)
+# Elements de la fenetre
+FrameGlobal = Frame(fenetre, bg=backgroundColor) # Global frame (contient tout le reste)
 FrameGlobal.pack(padx=10, pady=10, fill=BOTH, expand=True)
 
-
-##################
-## Frame de gauche
-##################
-partieJeu = Frame(FrameGlobal, width=545, bg=backgroundColor)
+partieJeu = Frame(FrameGlobal, width=545, bg=backgroundColor) # Frame de gauche
 partieJeu.pack(padx=10, side=LEFT, fill=Y)
 
-# Frame du haut de la frame de gauche
-Partiejeu = Frame(partieJeu, bg=backgroundColor, height=550)
-Partiejeu.pack(side=TOP)
+hautJeu = Frame(partieJeu, bg=backgroundColor, height=550) # Frame du haut de la frame "partieJeu"
+hautJeu.pack(side=TOP)
 
-# Zone de lacher de bloc
-lacherBloc = Frame(Partiejeu, bg=elementColor, height=65)
+lacherBloc = Frame(hautJeu, bg=elementColor, height=65) # Zone/grille de lacher de bloc
 lacherBloc.pack(pady=10, side=TOP, fill=X)
 
-# Grille du jeu
-grille = Frame(Partiejeu, bg=backgroundColor)
+grille = Frame(hautJeu, bg=backgroundColor) # Grille du jeu
 grille.pack(pady=10, side=BOTTOM, fill=BOTH, expand=True)
 
-
-# Compartiment des pouvoirs
-pouvoirs = Frame(partieJeu, bg=backgroundColor, height=150)
+pouvoirs = Frame(partieJeu, bg=backgroundColor, height=150) # Compartiment des pouvoirs
 pouvoirs.pack(pady=10, side=TOP, fill=X)
 
 # Bouton 1
@@ -186,6 +177,7 @@ def actualiser(x, y, elementGraphique, elementTableau):
             bloc.grid(row=i, column=j)
 
 def actualiserHaut():
+    valeurBloc = listeprochain.file[0]
     for j in range(7):
         case = casesHaut[j]
         case.delete("all")
@@ -202,16 +194,49 @@ def choisirColonne(colonne):
     actualiserHaut()
 
 
+def deposerBloc(colonne):
+    valeur = listeprochain.file[0]
+
+    succes = jeu.deposerBloc(colonne, valeur)
+
+    if not succes:
+        return
+
+    listeprochain.defiler()
+    listeprochain.filer(listeProba)
+
+    actualiser(9, 7, grille, jeu.DonnerGrille())
+    actualiserHaut()
+    actualiserProchains()
+
+
+def actualiserProchains():
+    for label, index in [(prochain1Label, 1), (prochain2Label, 2), (prochain3Label, 3)]:
+        valeur = listeprochain.file[index]
+        bloc = Bloc(valeur)
+
+        label.configure(text=str(valeur), bg=bloc.couleurBg(), fg=bloc.couleurFg())
+
+
 for j in range(7):
-    case = Canvas(lacherBloc, width=75, height=75, bg=backgroundColor, highlightthickness=1, highlightbackground=elementColor)
+    case = Canvas(
+        lacherBloc,
+        width=75,
+        height=75,
+        bg=backgroundColor,
+        highlightthickness=1,
+        highlightbackground=elementColor
+    )
+
     case.grid(row=0, column=j)
-    # Détection du survol de la souris
+
     case.bind("<Enter>", lambda event, col=j: choisirColonne(col))
+    case.bind("<Button-1>", lambda event, col=j: deposerBloc(col))
+
     casesHaut.append(case)
 
 
-
 actualiserHaut()
-actualiser(9, 7, grille, jeu.get_grille())
+actualiser(9, 7, grille, jeu.DonnerGrille())
 # Lancer la fenetre
 fenetre.mainloop()

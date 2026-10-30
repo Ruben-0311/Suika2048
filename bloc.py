@@ -42,12 +42,11 @@ class Bloc:
     def fusionner(self, bloc2):
         if self.valeur == bloc2.valeur:
             self.valeur *= 2
-            self.saCouleur = self.couleur()
+            self.saCouleur = self.couleurBg()
             bloc2.suprrimer()
         else:
             return False
 
     def suprrimer(self):
         self.valeur = ""
-        self.saCouleur = self.couleur()
-        
+        self.saCouleur = self.couleurBg()        

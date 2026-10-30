@@ -13,8 +13,25 @@ class Jeu:
         self.grilleHaut[3] = random.choice(listeProba)
 
 
-    def get_grille(self):
+    def DonnerGrille(self):
         return self.grille
 
-    def get_grille_haut(self):
+    def DonnerGrilleHaut(self):
         return self.grilleHaut
+
+    def trouverPosition(self, colonne):
+        for ligne in range(8, -1, -1):
+            if self.grille[ligne][colonne] == "":
+                return ligne
+
+        return None
+
+    def deposerBloc(self, colonne, valeur):
+        ligne = self.trouverPosition(colonne)
+
+        if ligne is None:
+            return False
+
+        self.grille[ligne][colonne] = valeur
+
+        return True
