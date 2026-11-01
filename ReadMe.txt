@@ -1,2 +1,3 @@
 Suika 2048 jeu développé avec Python (Tkinter), melange de Suika Game et 2048. Le but est de fusionner des blocs de même valeur pour obtenir des blocs toujours plus grands, accumuler des points et réaliser le meilleur score possible.
 Projet en cours
+Il manque toutes les infos avec les ### pour comprendre le programme
