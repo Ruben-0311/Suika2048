@@ -1,7 +1,10 @@
-# Différents boutons pour l'interface graphique
+### Différents boutons pour l'interface graphique
+
 from tkinter import *
 from random import choice
 from bloc import Bloc
+from file import File
+from main import Jeu
 
 
 # Fonction pour créer une nouvelle partie
@@ -18,7 +21,7 @@ def nouvellePartie(jeu, listeprochain, casesHaut, grille,
     # Réinitialisation la grille du haut
     for j in range(7):
         jeu.grilleHaut[j] = ""
-    jeu.grilleHaut[3] = choice([2, 2, 2, 2, 2, 2, 2, 2, 2,4, 4, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32])
+    jeu.grilleHaut[3] = choice([2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32])
     # Réinitialisation la file
     listeprochain.file = [2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32]
     # Actualisation les affichages
@@ -68,11 +71,11 @@ def relancer(listeprochain, historique, actualiserProchains, relancementsRestant
     if relancementsRestants[0] <= 0:
         return
     # Sauvegarde de la file
-    historique.append(([ligne[:] for ligne in jeu.grille],listeprochain.file[:]))
+    historique.append(([ligne[:] for ligne in Jeu.grille],listeprochain.file[:]))
     # On mélange les prochains blocs
-    listeprochain.file[0] = random.choice([2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32])
-    listeprochain.file[1] = random.choice([2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32])
-    listeprochain.file[2] = random.choice([2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32])
+    listeprochain.file[0] = choice.choice([2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32])
+    listeprochain.file[1] = choice.choice([2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32])
+    listeprochain.file[2] = choice.choice([2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32])
     # On retire un relancement
     relancementsRestants[0] -= 1
     compteurRelancements.configure(text="Relancements restants : " + str(relancementsRestants[0]))
@@ -82,7 +85,9 @@ def relancer(listeprochain, historique, actualiserProchains, relancementsRestant
 ### Attention : les fonctions ci-dessous sont des fonctions à complettement réécrire
 ### Elles sont là pour l'instant pour éviter de réouvrir un autre fichier et de perdre du temps
 
+
 import pygame
+from pygame.locals import *  ###A choisir entre lui ou celui du haut
 
 # Initialisation de Pygame
 pygame.init()

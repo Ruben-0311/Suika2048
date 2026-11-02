@@ -5,6 +5,7 @@ from tkinter import *
 from file import File
 from bloc import *
 from jeu import Jeu
+from bouton import *
 ###########
 
 
