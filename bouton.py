@@ -4,7 +4,7 @@ from tkinter import *
 from random import choice
 from bloc import Bloc
 from file import File
-from main import Jeu
+from jeu import Jeu
 
 
 # Fonction pour créer une nouvelle partie
