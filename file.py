@@ -9,3 +9,6 @@ class File:
 
     def defiler(self):
         self.file.pop(0)
+
+    def relancer(self, liste):
+        self.file=[random.choice(liste) for i in range(4)]
