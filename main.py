@@ -89,6 +89,10 @@ def actualiserProchains():
         bloc = Bloc(valeur)
 
         label.configure(text=str(valeur), bg=bloc.couleurBg(), fg=bloc.couleurFg())
+
+def quitter():
+    fenetre.destroy()
+
 ####################
 
 
@@ -175,7 +179,7 @@ hautPara = Frame(partieAffichage, bg=backgroundColor)
 hautPara.pack(fill=X, side=TOP)
 restart = Button(hautPara, text=f"Restart", bg="#da7037", font=("Verdana", 13, "bold"), fg="#FFFFFF", height=2, bd=0, relief=FLAT) # Bouton recommencer
 restart.pack(padx=5, pady=10, side=LEFT, fill=X, expand=True)
-quitter = Button(hautPara, text=f"Quitter", bg="#da7037", font=("Verdana", 13, "bold"), fg="#FFFFFF", height=2, bd=0, relief=FLAT) # Bouton quitter
+quitter = Button(hautPara, text=f"Quitter", bg="#da7037", font=("Verdana", 13, "bold"), fg="#FFFFFF", height=2, bd=0, relief=FLAT, command=quitter) # Bouton quitter
 quitter.pack(padx=5, pady=10, side=RIGHT, fill=X, expand=True)
 
 # Affichage du score actuel et du meilleur score
