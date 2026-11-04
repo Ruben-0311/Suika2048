@@ -29,6 +29,69 @@ scoreVariable = 0
 meilleurScoreVariable = 12354
 ####################
 
+####################
+# Fonctions du jeu #
+def actualiser(x, y, elementGraphique, elementTableau):
+    for i in range(x):
+        for j in range(y):
+            # Couleurs par défaut comme case vide a chaques debut de boucle
+            couleurFond = backgroundColor
+            couleurTexte = "white"
+
+            if elementTableau[i][j] != "": # Si case pas vide on change ses couleurs
+                blocJeu = Bloc(elementTableau[i][j])
+                couleurFond = blocJeu.couleurBg()
+                couleurTexte = blocJeu.couleurFg()
+
+            bloc = Canvas(elementGraphique, width=75, height=75, bg=couleurFond, highlightthickness=1, highlightbackground=elementColor) # On applique le style
+
+            if elementTableau[i][j] != "":
+                bloc.create_text(37.5, 37.5, text=str(elementTableau[i][j]), font=("Inter", 25), fill=couleurTexte) #Pareil pour la couleur du texte
+            bloc.grid(row=i, column=j)
+
+def actualiserHaut():
+    valeurBloc = listeprochain.file[0]
+    for j in range(7):
+        case = casesHaut[j]
+        case.delete("all")
+        case.configure(bg=backgroundColor)
+
+        if j == colonneSelectionnee:
+            bloc = Bloc(valeurBloc)
+            case.configure(bg=bloc.couleurBg())
+            case.create_text(37.5, 37.5, text=str(valeurBloc), font=("Inter", 25), fill=bloc.couleurFg())
+
+def choisirColonne(colonne):
+    global colonneSelectionnee
+    colonneSelectionnee = colonne
+    actualiserHaut()
+
+
+def deposerBloc(colonne):
+    valeur = listeprochain.file[0]
+
+    succes = jeu.deposerBloc(colonne, valeur)
+
+    if not succes:
+        return
+
+    listeprochain.defiler()
+    listeprochain.filer(listeProba)
+
+    actualiser(9, 7, grille, jeu.DonnerGrille())
+    actualiserHaut()
+    actualiserProchains()
+
+
+def actualiserProchains():
+    for label, index in [(prochain1Label, 1), (prochain2Label, 2), (prochain3Label, 3)]:
+        valeur = listeprochain.file[index]
+        bloc = Bloc(valeur)
+
+        label.configure(text=str(valeur), bg=bloc.couleurBg(), fg=bloc.couleurFg())
+####################
+
+
 
 # Parametrage de la fenêtre
 fenetre = Tk()
@@ -141,64 +204,6 @@ else:
     pass
 
 
-def actualiser(x, y, elementGraphique, elementTableau):
-    for i in range(x):
-        for j in range(y):
-            # Couleurs par défaut comme case vide a chaques debut de boucle
-            couleurFond = backgroundColor
-            couleurTexte = "white"
-
-            if elementTableau[i][j] != "": # Si case pas vide on change ses couleurs
-                blocJeu = Bloc(elementTableau[i][j])
-                couleurFond = blocJeu.couleurBg()
-                couleurTexte = blocJeu.couleurFg()
-
-            bloc = Canvas(elementGraphique, width=75, height=75, bg=couleurFond, highlightthickness=1, highlightbackground=elementColor) # On applique le style
-
-            if elementTableau[i][j] != "":
-                bloc.create_text(37.5, 37.5, text=str(elementTableau[i][j]), font=("Inter", 25), fill=couleurTexte) #Pareil pour la couleur du texte
-            bloc.grid(row=i, column=j)
-
-def actualiserHaut():
-    valeurBloc = listeprochain.file[0]
-    for j in range(7):
-        case = casesHaut[j]
-        case.delete("all")
-        case.configure(bg=backgroundColor)
-
-        if j == colonneSelectionnee:
-            bloc = Bloc(valeurBloc)
-            case.configure(bg=bloc.couleurBg())
-            case.create_text(37.5, 37.5, text=str(valeurBloc), font=("Inter", 25), fill=bloc.couleurFg())
-
-def choisirColonne(colonne):
-    global colonneSelectionnee
-    colonneSelectionnee = colonne
-    actualiserHaut()
-
-
-def deposerBloc(colonne):
-    valeur = listeprochain.file[0]
-
-    succes = jeu.deposerBloc(colonne, valeur)
-
-    if not succes:
-        return
-
-    listeprochain.defiler()
-    listeprochain.filer(listeProba)
-
-    actualiser(9, 7, grille, jeu.DonnerGrille())
-    actualiserHaut()
-    actualiserProchains()
-
-
-def actualiserProchains():
-    for label, index in [(prochain1Label, 1), (prochain2Label, 2), (prochain3Label, 3)]:
-        valeur = listeprochain.file[index]
-        bloc = Bloc(valeur)
-
-        label.configure(text=str(valeur), bg=bloc.couleurBg(), fg=bloc.couleurFg())
 
 
 for j in range(7):
