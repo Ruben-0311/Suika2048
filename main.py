@@ -234,28 +234,39 @@ def quitter_menu():
 
 # Lancer la fenetre
 def LancerJeu():
-    fenetre.mainloop()
     menu.destroy()
+    fenetre.mainloop()
     
 ####################
 
 
 
-# Parametrage de la fenêtre
+################################
+# Parametrage de la fenêtre menu
+menu = Tk()
+menu.title("Suika 2048")
+menu.geometry("450x425")
+menu.configure(bg=backgroundColor)
+menu.resizable(0, 0)  # Empeche le redimensionnement de la fenetre
+
+# Bouton quitter le menu
+quitterMenu = Button(menu, text="Quitter", bg="#da7037", font=("Verdana", 13, "bold"), fg="#FFFFFF", height=2, bd=0, relief=FLAT, command=quitter_menu)
+quitterMenu.place(x=150, y=150, width=150, height=45)
+# Bouton jouer
+jouer = Button(menu, text="Jouer", bg="#da7037", font=("Verdana", 13, "bold"), fg="#FFFFFF", height=2, bd=0, relief=FLAT, command=LancerJeu)
+jouer.place(x=150, y=200, width=150, height=45)
+################################
+
+
+
+###########################
+# Parametrage de la fenêtre de jeu
 fenetre = Tk()
 fenetre.title("Suika 2048")
 fenetre.geometry("950x925")
 fenetre.configure(bg=backgroundColor)
 fenetre.resizable(0, 0)  # Empeche le redimensionnement de la fenetre
 
-# Parametrage de la fenêtre menu
-menu = Tk()
-menu.title("le menu de malade qui est trop classe")
-menu.geometry("450x425")
-menu.configure(bg=backgroundColor)
-menu.resizable(0, 0)  # Empeche le redimensionnement de la fenetre
-
-##############
 # Elements de la fenetre
 FrameGlobal = Frame(fenetre, bg=backgroundColor) # Global frame (contient tout le reste)
 FrameGlobal.pack(padx=10, pady=10, fill=BOTH, expand=True)
@@ -336,13 +347,6 @@ restart = Button(hautPara, text=f"Restart", bg="#da7037", font=("Verdana", 13, "
 restart.pack(padx=5, pady=10, side=LEFT, fill=X, expand=True)
 quitter = Button(hautPara, text=f"Quitter", bg="#da7037", font=("Verdana", 13, "bold"), fg="#FFFFFF", height=2, bd=0, relief=FLAT, command=quitter) # Bouton quitter
 quitter.pack(padx=5, pady=10, side=RIGHT, fill=X, expand=True)
-
-# Bouton quitter le menu
-quitterMenu = Button(menu, text="Quitter", bg="#da7037", font=("Verdana", 13, "bold"), fg="#FFFFFF", height=2, bd=0, relief=FLAT, command=quitter_menu)
-quitterMenu.place(x=150, y=150, width=150, height=45)
-# Bouton jouer
-jouer = Button(menu, text="Jouer", bg="#da7037", font=("Verdana", 13, "bold"), fg="#FFFFFF", height=2, bd=0, relief=FLAT, command=LancerJeu)
-jouer.place(x=150, y=200, width=150, height=45)
 
 # Affichage du score actuel et du meilleur score
 scoreGlobal = Frame(partieAffichage, bg=backgroundColor, height=150)
