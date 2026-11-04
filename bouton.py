@@ -1,3 +1,4 @@
+
 ### Différents boutons pour l'interface graphique
 
 # Imports #
@@ -29,14 +30,9 @@ def nouvellePartie(jeu, listeprochain, grille, actualiser, actualiserHaut, actua
     scoreValeur.configure(text="0")
 
 # Fonction pour poser une bombe #
-def bombe(jeu, actualiser, actualiserHaut, actualiserProchains, grille, compteurBombes, deposerBloc, choisirColonne):
+def bombe(jeu, actualiser, actualiserHaut, actualiserProchains, grille, compteurBombes):
     blocsPresents = []
 
-    # Il manque le fait de pouvoir cliquer sur une case pour poser la bombe
-    deposerBloc(colonne)
-    choisirColonne(colonne)
-    case.bind("<Enter>", lambda event, col=j: choisirColonne(col))
-    case.bind("<Button-1>", lambda event, col=j: deposerBloc(col))
     # La bombe ne peut être posée que sur un bloc présent dans la grille #
     for i in range(9):
         for j in range(7):
@@ -64,7 +60,6 @@ def bombe(jeu, actualiser, actualiserHaut, actualiserProchains, grille, compteur
 
 # Fonction pour relancer les prochains blocs #
 def relancer(listeprochain, historique, actualiserProchains, relancementsRestants, compteurRelancements):
-
     # Vérification du nombre de relancements restants
     if relancementsRestants[0] <= 0:
         return
@@ -81,11 +76,4 @@ def relancer(listeprochain, historique, actualiserProchains, relancementsRestant
 
 #### EN COURT
 
-
-# Fonction pour fusionner deux blocs
-def fusionner(grille, jeu, actualiser):
-    #trouver comment sélectionner deux blocs (à faire)
-
-
-# Fonction pour supprimer un bloc
-def supprimer():
+    
