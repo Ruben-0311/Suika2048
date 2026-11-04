@@ -5,13 +5,12 @@ from tkinter import *
 from file import File
 from bloc import *
 from jeu import Jeu
-from bouton import *
 ###########
 
 
 ###################
 # Setup des class #
-listeProba = [2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32] # Creations de
+listeProba = [2, 2, 2, 2, 2, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32] # Creations de
 listeprochain = File(listeProba)                                                # la file
 
 jeu = Jeu()                             # Mise en place de la classe Jeu
@@ -25,13 +24,16 @@ casesHaut = []
 # Variables utiles #
 backgroundColor = "#151923"
 elementColor = "#252D3D"
+
+scoreVariable = 0
+meilleurScoreVariable = 12354
 ####################
 
 
 # Parametrage de la fenêtre
 fenetre = Tk()
 fenetre.title("Suika 2048")
-fenetre.geometry("950x900")
+fenetre.geometry("950x925")
 fenetre.configure(bg=backgroundColor)
 fenetre.resizable(0, 0)  # Empeche le redimensionnement de la fenetre
 
@@ -54,18 +56,16 @@ grille = Frame(hautJeu, bg=backgroundColor) # Grille du jeu
 grille.pack(pady=10, side=BOTTOM, fill=BOTH, expand=True)
 
 # Compartiment des pouvoirs
-pouvoirs = Frame(partieJeu, bg=backgroundColor, height=150)
+pouvoirs = Frame(partieJeu, bg=backgroundColor, height=200)
 pouvoirs.pack(pady=10, side=TOP, fill=X)
-pouvoir1 = Button(pouvoirs, text="Annuler", bg="#2B6FF6", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT) # Bouton pouvoir 1
-pouvoir1.pack(padx=5, pady=10, side=LEFT, fill=X, expand=True)
-pouvoir2 = Button(pouvoirs, text="Supprimer", bg="#E74C3C", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT) # Bouton pouvoir 2
-pouvoir2.pack(padx=5, pady=10, side=LEFT, fill=X, expand=True)
-pouvoir3 = Button(pouvoirs, text="Fusionner", bg="#E67E22", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT) # Bouton pouvoir 3
-pouvoir3.pack(padx=5, pady=10, side=LEFT, fill=X, expand=True)
-pouvoir4 = Button(pouvoirs, text="Relancer", bg="#8E44AD", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT) # Bouton pouvoir 4
-pouvoir4.pack(padx=5, pady=10, side=LEFT, fill=X, expand=True)
-pouvoir5 = Button(pouvoirs, text="Bombe", bg="#27AE60", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT) # Bouton pouvoir 5
-pouvoir5.pack(padx=5, pady=10, side=LEFT, fill=X, expand=True)
+Supprimer = Button(pouvoirs, text=f"Supprimer \n {3}x", bg="#E74C3C", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT) # Bouton pouvoir 2
+Supprimer.pack(padx=5, pady=10, side=LEFT, fill=X, expand=True)
+Fusionner = Button(pouvoirs, text=f"Fusionner \n {3}x", bg="#E67E22", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT) # Bouton pouvoir 3
+Fusionner.pack(padx=5, pady=10, side=LEFT, fill=X, expand=True)
+Relancer = Button(pouvoirs, text=f"Relancer \n {5}x", bg="#8E44AD", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT) # Bouton
+Relancer.pack(padx=5, pady=10, side=LEFT, fill=X, expand=True)
+Bombe = Button(pouvoirs, text=f"Bombe \n {2}x", bg="#27AE60", font=("Verdana", 10, "bold"), fg="#FFFFFF", height=3, bd=0, relief=FLAT) # Bouton pouvoir 5
+Bombe.pack(padx=5, pady=10, side=LEFT, fill=X, expand=True)
 
 
 ####### Frame de droite #######
@@ -104,26 +104,41 @@ prochain3.pack_propagate(False)
 prochain3Label = Label(prochain3, text=listeprochain.file[3], font=("Verdana", 18, "bold"), bg=Bloc(listeprochain.file[3]).couleurBg(), fg=Bloc(listeprochain.file[3]).couleurFg())
 prochain3Label.pack(expand=True, fill=BOTH)
 
+# Zone parametres
+parametre = Frame(partieAffichage, bg=backgroundColor)
+parametre.pack(pady=10, fill=BOTH, expand=True)
+
+hautPara = Frame(partieAffichage, bg=backgroundColor)
+hautPara.pack(fill=X, side=TOP)
+restart = Button(hautPara, text=f"Restart", bg="#da7037", font=("Verdana", 13, "bold"), fg="#FFFFFF", height=2, bd=0, relief=FLAT) # Bouton recommencer
+restart.pack(padx=5, pady=10, side=LEFT, fill=X, expand=True)
+quitter = Button(hautPara, text=f"Quitter", bg="#da7037", font=("Verdana", 13, "bold"), fg="#FFFFFF", height=2, bd=0, relief=FLAT) # Bouton quitter
+quitter.pack(padx=5, pady=10, side=RIGHT, fill=X, expand=True)
 
 # Affichage du score actuel et du meilleur score
 scoreGlobal = Frame(partieAffichage, bg=backgroundColor, height=150)
 scoreGlobal.pack(side=BOTTOM, fill=X)
 
-# score actuel 
+# score actuel
 score = Frame(scoreGlobal, bg="#2B6FF6", height=65) # Score actuel
 score.pack(pady=10, side=TOP, fill=X)
-scoreLabel = Label(score, text="Score :", font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF") # Texte gauche 
+scoreLabel = Label(score, text="Score :", font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF") # Texte gauche
 scoreLabel.pack(side=LEFT, pady=10, padx=10)
-scroreValeur = Label(score, text="8496", font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF") # Texte droite
-scroreValeur.pack(side=RIGHT, pady=10, padx=10)
+scoreValeur = Label(score, text=scoreVariable, font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF") # Texte droite
+scoreValeur.pack(side=RIGHT, pady=10, padx=10)
 # Meilleur score
 meilleurScore = Frame(scoreGlobal, bg="#2B6FF6", height=65)
 meilleurScore.pack(pady=10, side=TOP, fill=X)
-meilleurScoreLabel = Label(meilleurScore, text="Best score :", font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF") # Texte gauche 
-meilleurScoreLabel.pack(side=LEFT, pady=10, padx=10)                                                                     
-meilleurScoreValeur = Label(meilleurScore, text="16542", font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF") # Texte droite 
+meilleurScoreLabel = Label(meilleurScore, text="Best score :", font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF") # Texte gauche
+meilleurScoreLabel.pack(side=LEFT, pady=10, padx=10)
+meilleurScoreValeur = Label(meilleurScore, text="16542", font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF") # Texte droite
 meilleurScoreValeur.pack(side=RIGHT, pady=10, padx=10)
 
+if scoreVariable>meilleurScoreVariable:
+    meilleurScoreVariable=scoreVariable
+
+else:
+    pass
 
 
 def actualiser(x, y, elementGraphique, elementTableau):
