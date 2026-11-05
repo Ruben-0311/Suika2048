@@ -29,6 +29,7 @@ elementColor = "#252D3D"
 usagesInitiaux = {"supprimer": 3, "fusionner": 3, "relancer": 5, "bombe": 2}
 usagesRestants = usagesInitiaux.copy()
 pouvoirActif = None   # None si aucun pouvoir n'est selectionne
+partieTerminee = False
 
 # Textes d'indication
 texteRegles = ("Regle du jeu : clique sur une colonne du haut pour lâcher le bloc. "
@@ -143,6 +144,9 @@ def actualiserPouvoirs():
             bouton.configure(relief=FLAT, bd=0)
 
 def deposerBloc(colonne):
+    if partieTerminee:
+        return
+
     # On ne lâche pas de bloc pendant qu'un pouvoir est selectionne
     if pouvoirActif is not None:
         afficherInfo("Un pouvoir est selectionne. " + messagesPouvoirs[pouvoirActif] + " (re-clique sur le bouton pour annuler)")
@@ -153,6 +157,8 @@ def deposerBloc(colonne):
     succes = jeu.deposerBloc(colonne, valeur)
 
     if not succes:
+        if jeu.estTerminee():
+            afficherGameOver()
         return
 
     listeprochain.defiler()
@@ -162,10 +168,16 @@ def deposerBloc(colonne):
     actualiser(9, 7, grille, jeu.DonnerGrille())
     actualiserHaut()
     actualiserProchains()
+    # On vérifie si la partie est terminée après avoir déposé le bloc
+    if jeu.estTerminee():
+        afficherGameOver()
 
 # Clic sur un bouton de pouvoir
 def choisirPouvoir(nom):
     global pouvoirActif
+
+    if partieTerminee: 
+        return
 
     if usagesRestants[nom] == 0:
         return
@@ -212,7 +224,8 @@ def cliquerGrille(ligne, colonne):
 
 # Bouton Restart
 def recommencer():
-    global pouvoirActif
+    global pouvoirActif, partieTerminee
+    partieTerminee = False
 
     nouvellePartie(jeu, listeprochain, listeProba)
     pouvoirActif = None
@@ -236,7 +249,18 @@ def quitter_menu():
 def LancerJeu():
     menu.destroy()
     fenetre.mainloop()
-    
+
+# Ecran de fin de partie
+def afficherGameOver():
+    global partieTerminee
+    partieTerminee = True
+    Label(
+        grille,
+        text="GAME OVER",
+        font=("Verdana", 28, "bold"),
+        bg="#151923",
+        fg="white"
+    ).place(relx=0.5, rely=0.5, anchor="center")
 ####################
 
 

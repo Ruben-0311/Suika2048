@@ -31,6 +31,12 @@ class Jeu:
 
         return None
 
+    def estTerminee(self):
+        return all(
+            self.trouverPosition(colonne) is None
+            for colonne in range(7)
+        )
+
     def deposerBloc(self, colonne, valeur):
         ligne = self.trouverPosition(colonne)
 
