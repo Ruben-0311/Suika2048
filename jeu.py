@@ -17,26 +17,30 @@ class Jeu:
         # Score de la partie
         self.score = 0
 
-
+    #### Fonctions pour gérer la grille et le score ###
     def DonnerGrille(self):
         return self.grille
 
+    # Renvoie le score actuel
     def DonnerGrilleHaut(self):
         return self.grilleHaut
 
+    # Renvoie le score actuel
     def trouverPosition(self, colonne):
         for ligne in range(8, -1, -1):
             if self.grille[ligne][colonne] == "":
                 return ligne
 
         return None
-
+    
+    # Renvoie True si la partie est terminée et False si elle ne l'est pas
     def estTerminee(self):
         return all(
             self.trouverPosition(colonne) is None
             for colonne in range(7)
         )
 
+    # Déposer un bloc dans la grille. Renvoie True si le bloc a été déposé, False sinon
     def deposerBloc(self, colonne, valeur):
         ligne = self.trouverPosition(colonne)
 
