@@ -1,12 +1,21 @@
 ###########
 # Imports #
-import random
 from tkinter import *
 from file import File
 from bloc import *
 from jeu import Jeu
 from bouton import nouvellePartie, relancer, appliquerPouvoir
 ###########
+
+
+
+import winsound
+
+winsound.PlaySound(
+    "musique.wav",
+    winsound.SND_FILENAME | winsound.SND_ASYNC | winsound.SND_LOOP
+)
+
 
 
 ###################
