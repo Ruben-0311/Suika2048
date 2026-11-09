@@ -18,6 +18,7 @@ winsound.PlaySound(
 
 
 
+
 ###################
 # Setup des class #
 listeProba = [2, 2, 2, 2, 2, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32]   # Creations de
@@ -44,7 +45,7 @@ partieTerminee = False
 texteRegles = ("Regle du jeu : clique sur une colonne du haut pour lâcher le bloc. "
                "S'il tombe a côte de blocs de même valeur, il les absorbe (priorite : "
                "bas, gauche, droite) et sa valeur double. Utilise les pouvoirs "
-               "avec parcimonie !")
+               "avec parcimonie ! \nPS : Appuie su le bouton quitter à la fin du jeu pour ne pas qu'elle hante tes jours!")
 messagesPouvoirs = {
     "supprimer": "Supprimer : clique sur le bloc de la grille que tu veux retirer.",
     "fusionner": "Fusionner : clique sur un bloc qui a un voisin identique (bas, gauche ou droite).",
@@ -193,7 +194,7 @@ def deposerBloc(colonne):
 def choisirPouvoir(nom):
     global pouvoirActif
 
-    if partieTerminee: 
+    if partieTerminee:
         return
 
     if usagesRestants[nom] == 0:
@@ -264,6 +265,7 @@ def recommencer():
 # Quitter le jeu
 def quitter():
     fenetre.destroy()
+    winsound.PlaySound(None, winsound.SND_ASYNC)
 
 # Quitter le menu
 def quitter_menu():
@@ -314,6 +316,7 @@ fenetre.title("Suika 2048")
 fenetre.geometry("950x925")
 fenetre.configure(bg=backgroundColor)
 fenetre.resizable(0, 0)  # Empeche le redimensionnement de la fenetre
+
 
 # Elements de la fenetre
 FrameGlobal = Frame(fenetre, bg=backgroundColor) # Global frame (contient tout le reste)
