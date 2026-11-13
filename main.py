@@ -161,22 +161,36 @@ def actualiserPouvoirs():
 
 # Dépose un bloc sur la grille en vérifiant si la partie est terminée ou non
 def deposerBloc(colonne):
-    if partieTerminee:
+    if partieTerminee or pouvoirActif is not None:
         return
-
-    # On ne lâche pas de bloc pendant qu'un pouvoir est selectionne
-    if pouvoirActif is not None:
-        afficherInfo("Un pouvoir est selectionne. " + messagesPouvoirs[pouvoirActif] + " (re-clique sur le bouton pour annuler)")
-        return
-
     valeur = listeprochain.file[0]
-
-    succes = jeu.deposerBloc(colonne, valeur)
-
-    if not succes:
-        if jeu.estTerminee():
-            afficherGameOver()
+    ligneFinale = jeu.trouverPosition(colonne)
+    if ligneFinale is None:
+        afficherGameOver()
         return
+
+    # Animation de la chute du bloc
+    def animation(ligne):
+        # Affichage temporaire du bloc
+        jeu.grille[ligne][colonne] = valeur
+        actualiser(9, 7, grille, jeu.DonnerGrille())
+        # On efface sa position temporaire
+        jeu.grille[ligne][colonne] = ""
+        if ligne < ligneFinale:
+            fenetre.after(60, lambda: animation(ligne + 1))
+        else:
+            # Dépôt définitif
+            jeu.deposerBloc(colonne, valeur)
+            listeprochain.defiler()
+            listeprochain.filer(listeProba)
+            actualiserScore()
+            actualiser(9, 7, grille, jeu.DonnerGrille())
+            actualiserHaut()
+            actualiserProchains()
+            if jeu.estTerminee():
+                afficherGameOver()
+    animation(0)
+    return
 
     listeprochain.defiler()
     listeprochain.filer(listeProba)
