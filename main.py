@@ -42,14 +42,11 @@ pouvoirActif = None   # None si aucun pouvoir n'est selectionne
 partieTerminee = False
 
 # Textes d'indication
-texteRegles = ("Regle du jeu : clique sur une colonne du haut pour lâcher le bloc. "
-               "S'il tombe a côte de blocs de même valeur, il les absorbe (priorite : "
-               "bas, gauche, droite) et sa valeur double. Utilise les pouvoirs "
-               "avec parcimonie ! \nPS : Appuie su le bouton quitter à la fin du jeu pour ne pas qu'elle hante tes jours!")
+texteRegles = ("Regle du jeu : cliquer sur une des colonne du haut pour lâcher le bloc. S'il tombe a côte de blocs de même valeur, il les absorbe (priorite : bas, gauche, droite) et sa valeur double. (Les pouvoirs sont en utilisation limitée)")
 messagesPouvoirs = {
-    "supprimer": "Supprimer : clique sur le bloc de la grille que tu veux retirer.",
-    "fusionner": "Fusionner : clique sur un bloc qui a un voisin identique (bas, gauche ou droite).",
-    "bombe": "Bombe : clique sur un bloc, il explose avec les 4 blocs qui l'entourent."
+    "supprimer": "Supprimer : cliquer sur le bloc a supprimer.",
+    "fusionner": "Fusionner : cliquer sur un bloc qui a un voisin identique pour les fusionner.",
+    "bombe": "Bombe : cliquer sur un bloc, il explose avec les 4 blocs qui l'entourent."
 }
 nomsPouvoirs = {"supprimer": "Supprimer", "fusionner": "Fusionner", "relancer": "Relancer", "bombe": "Bombe"}
 ####################
