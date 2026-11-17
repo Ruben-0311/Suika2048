@@ -1,7 +1,7 @@
-#####Fichier principal du jeu "Fichier main"
 ###########
 # Imports #
 from tkinter import *
+import bloc
 from file import File
 from bloc import *
 from jeu import Jeu
@@ -9,9 +9,8 @@ from bouton import nouvellePartie, relancer, appliquerPouvoir
 ###########
 
 
-
+# Pour la musique de fond (boucle infinie)
 import winsound
-
 winsound.PlaySound(
     "musique.wav",
     winsound.SND_FILENAME | winsound.SND_ASYNC | winsound.SND_LOOP
@@ -37,13 +36,21 @@ backgroundColor = "#151923"
 elementColor = "#252D3D"
 
 # Pouvoirs : nombre d'utilisations au depart et nombre restant
-usagesInitiaux = {"supprimer": 3, "fusionner": 3, "relancer": 5, "bombe": 2}
-usagesRestants = usagesInitiaux.copy()
-pouvoirActif = None   # None si aucun pouvoir n'est selectionne
-partieTerminee = False
+usagesInitiaux = {"supprimer": 3, 
+                  "fusionner": 3, 
+                  "relancer": 5, 
+                  "bombe": 2}
 
-# Textes d'indication
-texteRegles = ("Regle du jeu : cliquer sur une des colonne du haut pour lâcher le bloc. S'il tombe a côte de blocs de même valeur, il les absorbe (priorite : bas, gauche, droite) et sa valeur double. (Les pouvoirs sont en utilisation limitée)")
+usagesRestants = {"supprimer": 3, 
+                  "fusionner": 3, 
+                  "relancer": 5, 
+                  "bombe": 2}
+pouvoirActif = None     # None si aucun pouvoir n'est selectionne sinon, le nom du pouvoir
+partieTerminee = False  # False sauf si la partie est terminee
+####################
+
+# Textes d'indication dans la l'info bulle du jeu (=regle du jeu/description des pouvoir)
+texteRegles = ("Regle du jeu : cliquer sur une des colonne du haut pour lâcher le bloc. S'il tombe a côte de blocs de même valeur, il les absorbe (priorite : bas, gauche, droite) et sa valeur double. (Les pouvoirs sont en utilisation limitee)")
 messagesPouvoirs = {
     "supprimer": "Supprimer : cliquer sur le bloc a supprimer.",
     "fusionner": "Fusionner : cliquer sur un bloc qui a un voisin identique pour les fusionner.",
@@ -55,8 +62,8 @@ nomsPouvoirs = {"supprimer": "Supprimer", "fusionner": "Fusionner", "relancer": 
 
 ####################
 ### Fonctions du jeu ###
-# Renvoie le meilleur score sauvegarder dans un fichier texte
 def lireMeilleurScore(): # Meilleur score (sauvegarde dans un fichier texte)
+    # Fonction qui lit le meilleur score et le renvoie (si ne trouve rien renvoie 0
     try:
         fichier = open("meilleur_score.txt", "r")
         valeur = int(fichier.read())
@@ -65,228 +72,241 @@ def lireMeilleurScore(): # Meilleur score (sauvegarde dans un fichier texte)
     except (FileNotFoundError, ValueError):
         return 0
 
-# Sauvegarde le meilleur score dans un fichier texte
-def sauvegarderMeilleurScore(valeur):
+def sauvegarderMeilleurScore(valeur):              
+    #Fonction qui sauvegarde le meilleur score du joueur dans un fichier nomme "meilleur_score.txt"
     fichier = open("meilleur_score.txt", "w")
     fichier.write(str(valeur))
     fichier.close()
 
-meilleurScoreVariable = lireMeilleurScore()
+meilleurScoreVariable = lireMeilleurScore()     #On charge le meilleur score au debut
 
-# Actualiser le jeu et la grille, ainsi que le score et les pouvoirs
 def actualiser(x, y, elementGraphique, elementTableau):
-    # On detruit les anciennes cases pour ne pas les empiler a chaque actualisation
-    for widget in elementGraphique.winfo_children():
+    # Fonction pour actualiser la grille du jeu
+    for widget in elementGraphique.winfo_children():    # On detruit tt
         widget.destroy()
 
     for i in range(x):
         for j in range(y):
-            # Couleurs par defaut comme case vide a chaques debut de boucle
+            # On initioalise les cases comme si elles etaient vides
             couleurFond = backgroundColor
             couleurTexte = "white"
 
-            if elementTableau[i][j] != "": # Si case pas vide on change ses couleurs
+            if elementTableau[i][j] != "": # Et si elle n'est pas vide on lui applique sa couleur de fond
                 blocJeu = Bloc(elementTableau[i][j])
-                couleurFond = blocJeu.couleurBg()
+                couleurFond = blocJeu.couleurBg()   # Grace a la class Bloc
                 couleurTexte = blocJeu.couleurFg()
 
             bloc = Canvas(elementGraphique, width=75, height=75, bg=couleurFond, highlightthickness=1, highlightbackground=elementColor) # On applique le style
 
             if elementTableau[i][j] != "":
-                bloc.create_text(37.5, 37.5, text=str(elementTableau[i][j]), font=("Inter", 25), fill=couleurTexte) #Pareil pour la couleur du texte
+                bloc.create_text(37.5, 37.5, text=str(elementTableau[i][j]), font=("Inter", 25), fill=couleurTexte) # Pareil mais on definit couleur de texte + sa taille
 
-            # Clic sur la case : sert a utiliser un pouvoir
-            bloc.bind("<Button-1>", lambda event, l=i, c=j: cliquerGrille(l, c))
-            bloc.grid(row=i, column=j)
+            bloc.bind("<Button-1>", lambda event, l=i, c=j: cliquerGrille(l, c))  # Detecte la colonne dans laquelle on veut deposer le bloc en recuperant ses coordonnees
+            bloc.grid(row=i, column=j)  # Positionne la case dans la grille
 
-# Actualise la zone de lacher de bloc (haut du jeu)
+
 def actualiserHaut():
-    valeurBloc = listeprochain.file[0]
-    for j in range(7):
-        case = casesHaut[j]
-        case.delete("all")
-        case.configure(bg=backgroundColor)
+    # Actualise la zone de lâcher de blocs en haut du jeu
+    valeurBloc = listeprochain.file[0] # Recupere le prochain bloc a jouer
+    for j in range(7): # Parcourt les 7 colonnes
+        case = casesHaut[j] # Recupere la case correspondante
+        case.delete("all") # Efface le contenu precedent
+        case.configure(bg=backgroundColor) # Remet la couleur de fond par defaut
 
-        if j == colonneSelectionnee:
-            bloc = Bloc(valeurBloc)
-            case.configure(bg=bloc.couleurBg())
-            case.create_text(37.5, 37.5, text=str(valeurBloc), font=("Inter", 25), fill=bloc.couleurFg())
+        if j == colonneSelectionnee: # Verifie si cette colonne est selectionnee
+            bloc = Bloc(valeurBloc) # Cree le bloc a afficher
+            case.configure(bg=bloc.couleurBg()) # Applique sa couleur
+            case.create_text(37.5, 37.5, text=str(valeurBloc), font=("Inter", 25), fill=bloc.couleurFg()) # Affiche sa valeur
 
-# choisir la colonne dans laquelle le bloc va tomber (choix du joueur)
+
 def choisirColonne(colonne):
+    # Choisit la colonne dans laquelle le bloc va tomber
     global colonneSelectionnee
-    colonneSelectionnee = colonne
+    colonneSelectionnee = colonne # On sauvegarde la colonne selectionne
     actualiserHaut()
 
-# Actualise la zone des prochains blocs (à droite de l'écran)
 def actualiserProchains():
-    for label, index in [(prochain1Label, 1), (prochain2Label, 2), (prochain3Label, 3)]:
-        valeur = listeprochain.file[index]
-        bloc = Bloc(valeur)
+    # Actualise l'affichage des trois prochains blocs
+    for label, index in [(prochain1Label, 1), (prochain2Label, 2), (prochain3Label, 3)]: # Parcourt les trois prochains blocs
+        valeur = listeprochain.file[index] # Recupere la valeur du bloc
+        bloc = Bloc(valeur) # Cree le bloc correspondant
+        label.configure(text=str(valeur), bg=bloc.couleurBg(), fg=bloc.couleurFg()) # Actualise sa valeur et ses couleurs
 
-        label.configure(text=str(valeur), bg=bloc.couleurBg(), fg=bloc.couleurFg())
 
-# Affiche le score et met a jour le meilleur score si besoin
 def actualiserScore():
+    # Actualise le score et aussi le meilleur score si necessaire
     global meilleurScoreVariable
-    scoreValeur.configure(text=str(jeu.score))
+    scoreValeur.configure(text=str(jeu.score)) # Actualise le score
 
-    if jeu.score > meilleurScoreVariable:
-        meilleurScoreVariable = jeu.score
-        meilleurScoreValeur.configure(text=str(meilleurScoreVariable))
-        sauvegarderMeilleurScore(meilleurScoreVariable)
+    if jeu.score > meilleurScoreVariable: # Verifie si le meilleur score est depasse
+        meilleurScoreVariable = jeu.score # si oui met a jour le meilleur score
+        meilleurScoreValeur.configure(text=str(meilleurScoreVariable)) # Actualise l affichage
+        sauvegarderMeilleurScore(meilleurScoreVariable) # Sauvegarde le nouveau record
 
-# Change le texte d'indication
+
 def afficherInfo(texte):
-    texteInfo.configure(text=texte)
+    # Change le texte d'indication affiche au joueur
+    texteInfo.configure(text=texte) # Remplace le texte actuel par celui qui est en parametre
 
-# Met a jour les boutons de pouvoirs (compteur, desactivation a 0, pouvoir selectionne)
+
 def actualiserPouvoirs():
-    for cle in boutonsPouvoirs:
-        reste = usagesRestants[cle]
-        bouton = boutonsPouvoirs[cle]
-        bouton.configure(text=nomsPouvoirs[cle] + " \n " + str(reste) + "x")
+    # Actualise les boutons des pouvoirs (nbr utilisations)
+    for cle in boutonsPouvoirs: # Parcourt tous les pouvoirs
+        reste = usagesRestants[cle] # Recupere le nombre d'utilisations
+        bouton = boutonsPouvoirs[cle] # Recupere le bouton correspondant
+        bouton.configure(text=nomsPouvoirs[cle] + " \n " + str(reste) + "x") # Actualise son texte + nbr utilisations
 
-        if reste == 0:
-            bouton.configure(state=DISABLED)
+        if reste == 0: # Verifie si le pouvoir est epuise
+            bouton.configure(state=DISABLED) # Desactive le bouton
         else:
-            bouton.configure(state=NORMAL)
+            bouton.configure(state=NORMAL) # Active le bouton
 
-        if cle == pouvoirActif:
-            bouton.configure(relief=SUNKEN, bd=4)
+        if cle == pouvoirActif: # Verifie si le pouvoir est selectionne
+            bouton.configure(relief=SUNKEN, bd=4) # Met le bouton en relief
         else:
-            bouton.configure(relief=FLAT, bd=0)
+            bouton.configure(relief=FLAT, bd=0) # Remet le bouton normal
 
-# Dépose un bloc sur la grille en vérifiant si la partie est terminée ou non
+
 def deposerBloc(colonne):
-    if partieTerminee or pouvoirActif is not None:
-        return
-    valeur = listeprochain.file[0]
-    ligneFinale = jeu.trouverPosition(colonne)
-    if ligneFinale is None:
-        afficherGameOver()
+    # Depose un bloc dans la colonne choisie
+    if partieTerminee or pouvoirActif is not None: # Si un pouvoir est selctionner ou on ne peux plus jouer, arrete la fonction
         return
 
-    # Animation de la chute du bloc
+    valeur = listeprochain.file[0] # Recupere la valeur du prochain bloc dans la file
+    ligneFinale = jeu.trouverPosition(colonne) # Recherche la position ou le bloc doit tomber
+
+    if ligneFinale is None: # Verifie si la colonne est pleine
+        afficherGameOver() # Affiche l'ecran de fin de partie
+        return
+
+    # Anime la chute du bloc
     def animation(ligne):
-        # Affichage temporaire du bloc
-        jeu.grille[ligne][colonne] = valeur
-        actualiser(9, 7, grille, jeu.DonnerGrille())
-        # On efface sa position temporaire
-        jeu.grille[ligne][colonne] = ""
-        if ligne < ligneFinale:
-            fenetre.after(10, lambda: animation(ligne + 1))
+        jeu.grille[ligne][colonne] = valeur # Affiche temporairement le bloc dans la grille
+        actualiser(9, 7, grille, jeu.DonnerGrille()) # Actualise la grille
+        jeu.grille[ligne][colonne] = "" # Efface sa position temporaire
+
+        if ligne < ligneFinale: # Verifie si le bloc a atteint sa position finale
+            fenetre.after(60, lambda: animation(ligne + 1)) # Passe a la ligne suivante apres un court delai
         else:
-            # Dépôt définitif
-            jeu.deposerBloc(colonne, valeur)
-            listeprochain.defiler()
-            listeprochain.filer(listeProba)
-            actualiserScore()
-            actualiser(9, 7, grille, jeu.DonnerGrille())
-            actualiserHaut()
-            actualiserProchains()
-            if jeu.estTerminee():
-                afficherGameOver()
-    animation(0)
+            # Depose definitivement le bloc
+            jeu.deposerBloc(colonne, valeur) # Ajoute le bloc dans la grille du jeu
+            listeprochain.defiler() # Retire le bloc joue de la file
+            listeprochain.filer(listeProba) # Ajoute un nouveau bloc dans la file
+            actualiserScore() # Actualise le score
+            actualiser(9, 7, grille, jeu.DonnerGrille()) # Actualise la grille
+            actualiserHaut() # Actualise la zone de lâcher
+            actualiserProchains() # Actualise les prochains blocs
 
-# Clic sur un bouton de pouvoir
+            if jeu.estTerminee(): # Verifie si la partie est terminee
+                afficherGameOver() # Affiche l'ecran de fin de partie
+
+    animation(0) # Lance l'animation depuis le haut de la grille
+    return
+
+
 def choisirPouvoir(nom):
+    # Selectionne ou deselectionne un pouvoir
     global pouvoirActif
 
-    if partieTerminee:
+    if partieTerminee: # Verifie si la partie est terminee, si oui termoine la fonction
         return
 
-    if usagesRestants[nom] == 0:
+    if usagesRestants[nom] == 0: # Verifie si le pouvoir est encore disponible, si oui termoine la fonction
         return
 
-    # Relancer s'applique tout de suite, pas besoin de cliquer sur la grille
+    # Le pouvoir Relancer s'applique immediatement
     if nom == "relancer":
-        relancer(listeprochain, listeProba)
-        usagesRestants[nom] -= 1
-        assert not any(reste < 0 for reste in usagesRestants.values()) #Le nombre d'utilisations restantes d'un pouvoir ne peut pas être négatif
-        afficherInfo("Les prochains blocs ont ete relances !")
-        actualiserHaut()
-        actualiserProchains()
-        actualiserPouvoirs()
+        relancer(listeprochain, listeProba) # Relance les prochains blocs
+        usagesRestants[nom] -= 1 # Retire une utilisation
+        actualiserHaut() # Actualise la zone de lâcher
+        actualiserProchains() # Actualise les prochains blocs
+        actualiserPouvoirs() # Actualise les boutons
         return
 
-    # Re-clic sur le même pouvoir : on annule la selection
+    # Un second clic sur le même pouvoir annule sa selection
     if pouvoirActif == nom:
-        pouvoirActif = None
-        afficherInfo(texteRegles)
+        pouvoirActif = None # Desactive le pouvoir
+        afficherInfo(texteRegles) # Reaffiche les regles
     else:
-        pouvoirActif = nom
-        afficherInfo(messagesPouvoirs[nom])
-    actualiserPouvoirs()
+        pouvoirActif = nom # Active le pouvoir selectionne
+        afficherInfo(messagesPouvoirs[nom]) # Affiche ses instructions
 
-# Clic sur une case de la grille (utile seulement si un pouvoir est selectionne)
+    actualiserPouvoirs() # Actualise l'apparence des boutons
+
+
 def cliquerGrille(ligne, colonne):
+    # Gere le clic sur une case de la grille pour utiliser un pouvoir
     global pouvoirActif
 
-    # On ne peut pas utiliser un pouvoir si on a plus d'utilisation restante
-    if pouvoirActif is None:
+    if pouvoirActif is None: # Verifie si aucun pouvoir n'est selectionne
         return
 
-    # On applique le pouvoir sur le bloc cliqué et on récupère si ça a fonctionné ou non
-    reussi = appliquerPouvoir(pouvoirActif, jeu, ligne, colonne)
+    # Applique le pouvoir sur la case selectionnee
+    reussi = appliquerPouvoir(pouvoirActif, jeu, ligne, colonne) # Recupere le resultat de l'action
 
-# On vérifie si la partie est terminée après avoir appliqué le pouvoir
+    # Verifie si le pouvoir a pu être applique
     if not reussi:
-        afficherInfo("Impossible ici ! " + messagesPouvoirs[pouvoirActif])
+        afficherInfo("Impossible ici ! " + messagesPouvoirs[pouvoirActif]) # Informe le joueur
         return
 
-    # On décrémente le nombre d'utilisations restantes du pouvoir et on désactive le pouvoir
-    usagesRestants[pouvoirActif] -= 1
-    pouvoirActif = None
-    afficherInfo(texteRegles)
+    # Met a jour les utilisations restantes
+    usagesRestants[pouvoirActif] -= 1 # Retire une utilisation
+    pouvoirActif = None # Desactive le pouvoir
+    afficherInfo(texteRegles) # Reaffiche les regles
 
-    # On actualise le jeu et la grille, ainsi que le score et les pouvoirs
-    actualiserScore()
-    actualiser(9, 7, grille, jeu.DonnerGrille())
-    actualiserPouvoirs()
+    # Actualise les informations du jeu
+    actualiserScore() # Actualise le score
+    actualiser(9, 7, grille, jeu.DonnerGrille()) # Actualise la grille
+    actualiserPouvoirs() # Actualise les boutons
 
-# Bouton Restart
+
 def recommencer():
+    # Reinitialise la grille et le score
     global pouvoirActif, partieTerminee
-    partieTerminee = False
+    partieTerminee = False # Reactive la partie
 
-    nouvellePartie(jeu, listeprochain, listeProba)
-    pouvoirActif = None
-    for cle in usagesRestants:
-        usagesRestants[cle] = usagesInitiaux[cle]
+    nouvellePartie(jeu, listeprochain, listeProba) # Reinitialise les donnees du jeu
+    pouvoirActif = None # Desactive tout pouvoir selectionne
 
-    afficherInfo(texteRegles)
-    actualiserScore()
-    actualiser(9, 7, grille, jeu.DonnerGrille())
-    actualiserHaut()
-    actualiserProchains()
-    actualiserPouvoirs()
+    for cle in usagesRestants: # Parcourt les differents pouvoirs
+        usagesRestants[cle] = usagesInitiaux[cle] # Reinitialise leurs utilisations
 
-# Quitter le jeu
+    afficherInfo(texteRegles) # Reaffiche les regles
+    actualiserScore() # Actualise le score
+    actualiser(9, 7, grille, jeu.DonnerGrille()) # Actualise la grille
+    actualiserHaut() # Actualise la zone de lâcher
+    actualiserProchains() # Actualise les prochains blocs
+    actualiserPouvoirs() # Actualise les boutons
+
+
 def quitter():
-    fenetre.destroy()
-    winsound.PlaySound(None, winsound.SND_ASYNC)
+    # Ferme la fenêtre
+    fenetre.destroy() # Ferme la fenêtre
+    winsound.PlaySound(None, winsound.SND_ASYNC) # Arrête la musique
 
-# Quitter le menu
+
 def quitter_menu():
-    menu.destroy()
+    # Ferme la fenêtre du menu
+    menu.destroy() # Detruit la fenêtre du menu
 
-# Lancer la fenetre
+
 def LancerJeu():
-    menu.withdraw() #Cache la fenetre menu
-    fenetre.deiconify() #Affiche la fenetre du jeu
+    # Lance la fenêtre du jeu
+    menu.destroy() # Ferme le menu
+    fenetre.mainloop() # Lance la boucle principale du jeu
 
-# Ecran de fin de partie
+
 def afficherGameOver():
+    # Affiche le message de fin de partie
     global partieTerminee
-    partieTerminee = True
+    partieTerminee = True # Empêche de continuer a jouer
     Label(
         grille,
         text="GAME OVER",
         font=("Verdana", 28, "bold"),
         bg="#151923",
         fg="white"
-    ).place(relx=0.5, rely=0.5, anchor="center")
+    ).place(relx=0.5, rely=0.5, anchor="center") # Affiche le message au centre de la grille
 ####################
 
 
@@ -295,40 +315,23 @@ def afficherGameOver():
 # Parametrage de la fenêtre menu
 menu = Tk()
 menu.title("Suika 2048")
-menu.geometry("542x385")
+menu.geometry("450x425")
 menu.configure(bg=backgroundColor)
 menu.resizable(0, 0)  # Empeche le redimensionnement de la fenetre
 
-
-fond_image = PhotoImage(file="image.png")
-fond_label = Label(menu, image=fond_image)
-fond_label.place(x=0, y=0, relwidth=1, relheight=1)
-
 # Bouton quitter le menu
 quitterMenu = Button(menu, text="Quitter", bg="#da7037", font=("Verdana", 13, "bold"), fg="#FFFFFF", height=2, bd=0, relief=FLAT, command=quitter_menu)
-quitterMenu.place(x=195, y=150, width=150, height=45)
-
+quitterMenu.place(x=150, y=150, width=150, height=45)
 # Bouton jouer
 jouer = Button(menu, text="Jouer", bg="#da7037", font=("Verdana", 13, "bold"), fg="#FFFFFF", height=2, bd=0, relief=FLAT, command=LancerJeu)
-jouer.place(x=195, y=200, width=150, height=45)
-
-# Affiche le message de bienvenue
-Messagebienvenue=Label(menu, text="Bienvenue dans Suika 2048 !", font=("Verdana", 18, "bold"), bg=backgroundColor, fg="#FFFFFF")
-Messagebienvenue.place(x=75, y=45, width=390, height=45)
-
-# Affiche le noms des créateurs
-nomCreateurs=Label(menu, text="Un jeu developpé par Ruben, Côme et Aésir", font=("Verdana", 12, "bold"), bg=backgroundColor, fg="#FFFFFF")
-nomCreateurs.place(x=75, y=80, width=390, height=45)
-
-
+jouer.place(x=150, y=200, width=150, height=45)
 ################################
 
 
 
 ###########################
 # Parametrage de la fenêtre de jeu
-fenetre = Toplevel(menu) #Crée la fenetre de jeu comme fenetre secondaire rattachée a la fenetre menu
-fenetre.withdraw() #Cache la fenêtre de jeu au demarrage
+fenetre = Tk()
 fenetre.title("Suika 2048")
 fenetre.geometry("950x925")
 fenetre.configure(bg=backgroundColor)
@@ -351,7 +354,7 @@ hautJeu.pack(side=TOP)
 lacherBloc = Frame(hautJeu, bg=elementColor, height=65) # Zone/grille de lacher de bloc
 lacherBloc.pack(pady=10, side=TOP, fill=X)
 
-# Création de la grille du jeu (9 par 7)
+# Creation de la grille du jeu (9 par 7)
 grille = Frame(hautJeu, bg=backgroundColor) # Grille du jeu
 grille.pack(pady=10, side=BOTTOM, fill=BOTH, expand=True)
 
@@ -375,11 +378,11 @@ boutonsPouvoirs = {"supprimer": Supprimer, "fusionner": Fusionner, "relancer": R
 partieAffichage = Frame(FrameGlobal, bg=backgroundColor) # Frame de droite
 partieAffichage.pack(padx=10, side=RIGHT, fill=BOTH, expand=True)
 
-# Création de la zone du titre et des prochains blocs
+# Creation de la zone du titre et des prochains blocs
 titreEtProchain = Frame(partieAffichage, bg=backgroundColor, height=500) # Frame du haut de la frame de droite
 titreEtProchain.pack(side=TOP, fill=X)
 
-# Création de la zone du titre (en haut de la frame de droite)
+# Creation de la zone du titre (en haut de la frame de droite)
 titre = Frame(titreEtProchain, bg=elementColor, height=65) # Frame qui contient le titre
 titre.pack(pady=10, side=TOP, fill=X)
 titreLabel = Label(titre, text="SuikaGame / 2048", font=("Verdana", 22, "bold"), bg=elementColor, fg="#FFFFFF") # Titre en lui meme
@@ -398,14 +401,14 @@ prochain1.pack_propagate(False)
 prochain1Label = Label(prochain1, text=listeprochain.file[1], font=("Verdana", 18, "bold"), bg=Bloc(listeprochain.file[1]).couleurBg(), fg=Bloc(listeprochain.file[1]).couleurFg()) # Texte de ce prochain bloc
 prochain1Label.pack(expand=True, fill=BOTH)
 
-# Deuxième prochain bloc (couleur et texte changent selon la valeur du bloc)
+# Deuxieme prochain bloc (couleur et texte changent selon la valeur du bloc)
 prochain2 = Frame(prochain, bg=elementColor, height=100, width=100) # Second prochain bloc
 prochain2.pack(pady=15)
 prochain2.pack_propagate(False)
 prochain2Label = Label(prochain2, text=listeprochain.file[2], font=("Verdana", 18, "bold"), bg=Bloc(listeprochain.file[2]).couleurBg(), fg=Bloc(listeprochain.file[2]).couleurFg())
 prochain2Label.pack(expand=True, fill=BOTH)
 
-# Troisième prochain bloc (couleur et texte changent selon la valeur du bloc)
+# Troisieme prochain bloc (couleur et texte changent selon la valeur du bloc)
 prochain3 = Frame(prochain, bg=elementColor, height=100, width=100) # Troisieme prochain bloc
 prochain3.pack(pady=15)
 prochain3.pack_propagate(False)
@@ -444,16 +447,9 @@ meilleurScoreLabel.pack(side=LEFT, pady=10, padx=10)
 meilleurScoreValeur = Label(meilleurScore, text=str(meilleurScoreVariable), font=("Verdana", 18, "bold"), bg="#2B6FF6", fg="#FFFFFF") # Texte droite
 meilleurScoreValeur.pack(side=RIGHT, pady=10, padx=10)
 
-# Création de la zone de lacher de bloc (haut du jeu)
+# Creation de la zone de lacher de bloc (haut du jeu)
 for j in range(7):
-    case = Canvas(
-        lacherBloc,
-        width=75,
-        height=75,
-        bg=backgroundColor,
-        highlightthickness=1,
-        highlightbackground=elementColor
-    )
+    case = Canvas(lacherBloc,width=75,height=75,bg=backgroundColor,highlightthickness=1, highlightbackground=elementColor)
 
     case.grid(row=0, column=j)
 
