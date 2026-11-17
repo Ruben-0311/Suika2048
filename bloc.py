@@ -1,4 +1,4 @@
-### Classe représentant un bloc du jeu (couleur en fonction de sa valeur)
+### Classe représentant un bloc du jeu (couleur en fonction de sa valeur)#
 class Bloc:
     def __init__(self, valeur):
         self.valeur = valeur
