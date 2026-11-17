@@ -42,14 +42,11 @@ pouvoirActif = None   # None si aucun pouvoir n'est selectionne
 partieTerminee = False
 
 # Textes d'indication
-texteRegles = ("Regle du jeu : clique sur une colonne du haut pour lâcher le bloc. "
-               "S'il tombe a côte de blocs de même valeur, il les absorbe (priorite : "
-               "bas, gauche, droite) et sa valeur double. Utilise les pouvoirs "
-               "avec parcimonie ! \nPS : Appuie su le bouton quitter à la fin du jeu pour ne pas qu'elle hante tes jours!")
+texteRegles = ("Regle du jeu : cliquer sur une des colonne du haut pour lâcher le bloc. S'il tombe a côte de blocs de même valeur, il les absorbe (priorite : bas, gauche, droite) et sa valeur double. (Les pouvoirs sont en utilisation limitée)")
 messagesPouvoirs = {
-    "supprimer": "Supprimer : clique sur le bloc de la grille que tu veux retirer.",
-    "fusionner": "Fusionner : clique sur un bloc qui a un voisin identique (bas, gauche ou droite).",
-    "bombe": "Bombe : clique sur un bloc, il explose avec les 4 blocs qui l'entourent."
+    "supprimer": "Supprimer : cliquer sur le bloc a supprimer.",
+    "fusionner": "Fusionner : cliquer sur un bloc qui a un voisin identique pour les fusionner.",
+    "bombe": "Bombe : cliquer sur un bloc, il explose avec les 4 blocs qui l'entourent."
 }
 nomsPouvoirs = {"supprimer": "Supprimer", "fusionner": "Fusionner", "relancer": "Relancer", "bombe": "Bombe"}
 ####################
@@ -161,34 +158,35 @@ def actualiserPouvoirs():
 
 # Dépose un bloc sur la grille en vérifiant si la partie est terminée ou non
 def deposerBloc(colonne):
-    if partieTerminee:
+    if partieTerminee or pouvoirActif is not None:
         return
-
-    # On ne lâche pas de bloc pendant qu'un pouvoir est selectionne
-    if pouvoirActif is not None:
-        afficherInfo("Un pouvoir est selectionne. " + messagesPouvoirs[pouvoirActif] + " (re-clique sur le bouton pour annuler)")
-        return
-
     valeur = listeprochain.file[0]
-
-    succes = jeu.deposerBloc(colonne, valeur)
-
-    if not succes:
-        if jeu.estTerminee():
-            afficherGameOver()
+    ligneFinale = jeu.trouverPosition(colonne)
+    if ligneFinale is None:
+        afficherGameOver()
         return
 
-    listeprochain.defiler()
-    listeprochain.filer(listeProba)
-
-    # On actualise le jeu et la grille, ainsi que le score et les pouvoirs
-    actualiserScore()
-    actualiser(9, 7, grille, jeu.DonnerGrille())
-    actualiserHaut()
-    actualiserProchains()
-    # On vérifie si la partie est terminée après avoir déposé le bloc
-    if jeu.estTerminee():
-        afficherGameOver()
+    # Animation de la chute du bloc
+    def animation(ligne):
+        # Affichage temporaire du bloc
+        jeu.grille[ligne][colonne] = valeur
+        actualiser(9, 7, grille, jeu.DonnerGrille())
+        # On efface sa position temporaire
+        jeu.grille[ligne][colonne] = ""
+        if ligne < ligneFinale:
+            fenetre.after(60, lambda: animation(ligne + 1))
+        else:
+            # Dépôt définitif
+            jeu.deposerBloc(colonne, valeur)
+            listeprochain.defiler()
+            listeprochain.filer(listeProba)
+            actualiserScore()
+            actualiser(9, 7, grille, jeu.DonnerGrille())
+            actualiserHaut()
+            actualiserProchains()
+            if jeu.estTerminee():
+                afficherGameOver()
+    animation(0)
 
 # Clic sur un bouton de pouvoir
 def choisirPouvoir(nom):
