@@ -175,7 +175,7 @@ def deposerBloc(colonne):
         # On efface sa position temporaire
         jeu.grille[ligne][colonne] = ""
         if ligne < ligneFinale:
-            fenetre.after(60, lambda: animation(ligne + 1))
+            fenetre.after(10, lambda: animation(ligne + 1))
         else:
             # Dépôt définitif
             jeu.deposerBloc(colonne, valeur)
