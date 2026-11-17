@@ -1,13 +1,15 @@
 ### Classe représentant un bloc du jeu (couleur en fonction de sa valeur)#
-#V Finale ?
 
 class Bloc:
+    # Class qui permet de gerer l'apparence des blocs et de les créer
+
     def __init__(self, valeur):
+        # Mise en place du bloc
         self.valeur = valeur
         self.saCouleur = self.couleurBg()
 
-# Couleur en fonction de la valeur du bloc
     def couleurBg(self):
+        # On definit sa couleur de fond en fonction de la valeur du bloc
         if self.valeur == "":
             return "#151923"
         elif self.valeur == 2:
@@ -33,8 +35,8 @@ class Bloc:
         elif self.valeur >= 2048:
             return "#eac02e"
 
-# Couleur du texte en fonction de la valeur du bloc
     def couleurFg(self):
+        # Couleur du texte en fonction de sa valeur
         if self.valeur == "":
             return "#FFFFFF"
         elif self.valeur in (2, 4, 128, 256, 512, 1024, 2048):
@@ -44,18 +46,3 @@ class Bloc:
         elif self.valeur > 2048:
             return "#51483F"
 
-# Fonction pour fusionner deux blocs et mettre à jour la couleur du bloc résultant
-    def fusionner(self, bloc2):
-        if self.valeur == bloc2.valeur:
-            self.valeur *= 2
-            self.saCouleur = self.couleurBg()
-            bloc2.suprrimer()
-        else:
-            return False
-
-### Vraiment nécessaire cette fonction ? (celle du dessous) ###
-
-# Fonction pour supprimer un bloc et mettre à jour la couleur du bloc
-    def suprrimer(self):
-        self.valeur = ""
-        self.saCouleur = self.couleurBg()        
