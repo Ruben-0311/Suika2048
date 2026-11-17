@@ -1,164 +1,176 @@
-### Création du jeu (grillage, dépot de blocs, etc...)
+### Creation du jeu (grille, depôt de blocs, etc...)
+
 from bloc import *
 from file import *
 
-listeProba = [2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32]
+listeProba = [2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 8, 8, 8, 16, 16, 32] # Liste des proba des blocs
+
 
 class Jeu:
+    ''' Classe qui s'occupe du jeu, ses regles, la gestion de tous les elements y etant raccordes'''
     def __init__(self):
-        # Grille du jeu 9 par 7
-        self.grille = [["" for i in range(7)] for j in range(9)]
+        self.grille = [["" for i in range(7)] for j in range(9)] # Creation de la grille principale de 9 lignes et 7 colonnes
+        self.grilleHaut = ["" for i in range(7)] # Creation de la grille superieure qui contient le prochain bloc
+        self.grilleHaut[3] = random.choice(listeProba) # Placement aleatoire du premier bloc au centre de la grille superieure
+        self.score = 0 # score = 0
 
-        # Grille du haut 1 par 7
-        self.grilleHaut = ["" for i in range(7)]
-        self.grilleHaut[3] = random.choice(listeProba)
-
-        # Score de la partie
-        self.score = 0
-
-    #### Fonctions pour gérer la grille et le score ###
+    #### Fonctions pour gerer la grille et le score ####
     def DonnerGrille(self):
+        # Renvoie la grille principale du jeu
         return self.grille
 
-    # Renvoie le score actuel
     def DonnerGrilleHaut(self):
+        # Renvoie la grille de depot des blocs
         return self.grilleHaut
 
-    # Renvoie le score actuel
     def trouverPosition(self, colonne):
+        # Cherche la premiere case vide d'une colonne en partant du bas
         for ligne in range(8, -1, -1):
             if self.grille[ligne][colonne] == "":
-                return ligne
+                return ligne # Renvoie le numero de la ligne si une place est disponible
 
-        return None
-    
-    # Renvoie True si la partie est terminée et False si elle ne l'est pas
+        return None # Renvoie None si la colonne est entierement remplie
+
     def estTerminee(self):
+        # Verifie si toutes les colonnes sont pleines, si oui termine la partie
         return all(
             self.trouverPosition(colonne) is None
             for colonne in range(7)
         )
 
-    # Déposer un bloc dans la grille. Renvoie True si le bloc a été déposé, False sinon
+    
     def deposerBloc(self, colonne, valeur):
-        ligne = self.trouverPosition(colonne)
+        # Cherche a deposer le bloc dans la colonne choisie
+        ligne = self.trouverPosition(colonne) # Recherche la premiere case disponible dans la colonne
 
+
+        # Si aucune case n'est disponible, le bloc ne peut pas être depose
         if ligne is None:
             return False
 
+        # Place le bloc dans la case trouvee
         self.grille[ligne][colonne] = valeur
 
-        # Fusion du bloc qui vient d'être lâché avec ses voisins
+        # Cherche les fusions possibles et ajoute les points gagnes au score
         self.score += self.fusionnerBloc(ligne, colonne)
 
         return True
 
 
     ### Fusion des blocs ###
-
-    # Cherche un voisin de même valeur : bas, puis gauche, puis droite
-    # Renvoie sa position (ligne, colonne) ou None s'il n'y en a pas
     def trouverVoisinIdentique(self, ligne, colonne):
-        valeur = self.grille[ligne][colonne]
+        # On cherche si le bloc a un voisin identique, si oui renvoie ses coordonnees
+        valeur = self.grille[ligne][colonne] # Recupere les coordonnees du bloc que l'on souhaite fusionner
 
-        # (décalage de ligne, décalage de colonne) dans l'ordre de priorité
+        # Definit les deplacements possibles dans l'ordre de priorite
+        # Chaque couple correspond a (decalage de ligne, decalage de colonne)
         for (decalageLigne, decalageColonne) in [(1, 0), (0, -1), (0, 1)]:
             l = ligne + decalageLigne
             c = colonne + decalageColonne
 
-            # On vérifie qu'on ne sort pas de la grille
+            # Verifie que les coordonnees du voisin restent dans la grille
             if 0 <= l < 9 and 0 <= c < 7:
+                # Verifie si le voisin possede la même valeur
                 if self.grille[l][c] == valeur:
                     return (l, c)
 
         return None
 
-    # Fait retomber les blocs d'une colonne pour boucher les trous
     def appliquerGravite(self, colonne):
-        # On récupère les valeurs de la colonne, du bas vers le haut
+        # But : faire tomber les blocs progrssivement
+
+        # Recupere les valeurs presentes dans la colonne, en partant du bas
         valeurs = []
         for ligne in range(8, -1, -1):
             if self.grille[ligne][colonne] != "":
                 valeurs.append(self.grille[ligne][colonne])
 
-        # On réécrit la colonne en partant du bas
+        # Reorganise la colonne en plaçant les blocs les uns sur les autres
         for ligne in range(8, -1, -1):
+            # Calcule l'indice de la valeur a replacer
             indice = 8 - ligne
+
+            # S'il reste des blocs a placer, on les remet dans la grille
             if indice < len(valeurs):
                 self.grille[ligne][colonne] = valeurs[indice]
             else:
+                # Les cases restantes sont laissees vides
                 self.grille[ligne][colonne] = ""
 
-    # Fusionne le bloc en (ligne, colonne) avec ses voisins identiques
-    # Le bloc absorbe les autres. Renvoie les points gagnés
+    
     def fusionnerBloc(self, ligne, colonne):
-        points = 0
-        voisin = self.trouverVoisinIdentique(ligne, colonne)
+        #Fait absorber le bloc voisin a celui qui vient d'etre laché par ce dernier
+        points = 0 # nbr de points gagnes avec fusion
 
+        voisin = self.trouverVoisinIdentique(ligne, colonne) # Recherche un premier voisin identique
+
+        # Continue tant qu'un voisin identique peut être trouve
         while voisin is not None:
-            ligneVoisin, colonneVoisin = voisin
-            nouvelleValeur = self.grille[ligne][colonne] * 2
-            points += nouvelleValeur
+            ligneVoisin, colonneVoisin = voisin # Recupere les coordonnees du bloc voisin
+            nouvelleValeur = self.grille[ligne][colonne] * 2 # Calcule la nouvelle valeur du bloc apres la fusion
+            points += nouvelleValeur            # ajoute la nouvelle valeur au nombre de points gagnes
 
             if ligneVoisin > ligne:
-                # Voisin du bas : le bloc fusionné prend sa place
+                # Si le voisin est en dessous, le bloc fusionne prend sa place
                 self.grille[ligne][colonne] = ""
                 self.grille[ligneVoisin][colonneVoisin] = nouvelleValeur
-                ligne = ligneVoisin
+
+                ligne = ligneVoisin # Met a jour la ligne du bloc fusionne.
+
             else:
-                # Voisin de gauche ou de droite : le bloc reste où il est
-                self.grille[ligne][colonne] = nouvelleValeur
-                self.grille[ligneVoisin][colonneVoisin] = ""
-                self.appliquerGravite(colonneVoisin)
+                self.grille[ligne][colonne] = nouvelleValeur # Si le voisin est a gauche ou a droite, le bloc reste a sa place
+                self.grille[ligneVoisin][colonneVoisin] = "" # Supprime le bloc voisin qui vient d'être absorbe
+                self.appliquerGravite(colonneVoisin) # Fait retomber les blocs de la colonne ou le voisin a ete supprime
 
-            # On regarde si le nouveau bloc peut encore fusionner
-            voisin = self.trouverVoisinIdentique(ligne, colonne)
+            voisin = self.trouverVoisinIdentique(ligne, colonne) # Verifie si le bloc fusionne peut encore fusionner avec un autre voisin
 
-        return points
+        return points # Renvoie le total des points gagnes
 
+    
 
-
-
-        ### Pouvoirs ###
-
-    # Remet la grille et le score à zéro
     def reinitialiser(self):
+        # Remet la grille principale et le score a zero
+        # Recree une grille vide de 9 lignes et 7 colonnes
         self.grille = [["" for i in range(7)] for j in range(9)]
+
+        # Reinitialise le score
         self.score = 0
-
-    # Pouvoir "Supprimer" : retire un bloc
+    
+    
+    ### Pouvoirs ###
     def supprimerBloc(self, ligne, colonne):
-        if self.grille[ligne][colonne] == "":
+        # Supprimer = retire un bloc de la grille
+        if self.grille[ligne][colonne] == "": # Verifie que la case selectionnee contient bien un bloc
             return False
 
-        self.grille[ligne][colonne] = ""
-        self.appliquerGravite(colonne)
+        self.grille[ligne][colonne] = "" # Supprime le bloc selectionne
+        self.appliquerGravite(colonne) # Fait retomber les blocs situes au-dessus pour combler le vide
         return True
 
-    # Pouvoir "Fusionner" : fusionne le bloc cliqué avec ses voisins identiques
-    # (même priorité que pour un bloc lâché : bas, gauche, droite)
     def fusionnerPouvoir(self, ligne, colonne):
-        if self.grille[ligne][colonne] == "":
+        # Fusionner = fusionne le bloc selectionne avec un voisin identique
+        if self.grille[ligne][colonne] == "": # Verifie que la case selectionnee n'est pas vide
             return False
 
-        if self.trouverVoisinIdentique(ligne, colonne) is None:
+        if self.trouverVoisinIdentique(ligne, colonne) is None: # Verifie qu'au moins un voisin identique existe
             return False
 
-        self.score += self.fusionnerBloc(ligne, colonne)
+        self.score += self.fusionnerBloc(ligne, colonne) # Effectue les fusions et ajoute les points gagnes au score
         return True
 
-    # Pouvoir "Bombe" : supprime le bloc cliqué et les 4 blocs qui l'entourent
     def exploser(self, ligne, colonne):
-        if self.grille[ligne][colonne] == "":
+        # Bombe = detruit le bloc selectionne et les quatres blocs autour
+        if self.grille[ligne][colonne] == "": # Verifie que la case selectionnee contient un bloc
             return False
 
-        for (decalageLigne, decalageColonne) in [(0, 0), (1, 0), (-1, 0), (0, -1), (0, 1)]:
-            l = ligne + decalageLigne
+        for (decalageLigne, decalageColonne) in [(0, 0), (1, 0), (-1, 0), (0, -1), (0, 1)]: # Definit les cinq positions a detruire :
+            l = ligne + decalageLigne                   # le bloc selectionne, celui du haut, du bas, de gauche et de droite
             c = colonne + decalageColonne
-            if 0 <= l < 9 and 0 <= c < 7:
-                self.grille[l][c] = ""
 
-        # Tous les blocs retombent
-        for c in range(7):
+            if 0 <= l < 9 and 0 <= c < 7: # Verifie que chaque position a detruire se trouve dans la grille
+                self.grille[l][c] = "" # Supprime le bloc present a la position
+
+        for c in range(7): # Re-applique la gravite pour combler les vides
             self.appliquerGravite(c)
+
         return True

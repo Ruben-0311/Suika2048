@@ -1,20 +1,16 @@
 import random#
-#V Finale ?
 
-# Classe représentant la file des prochains blocs à déposer
 class File:
-    ### Construction de la file ###
-    def __init__(self,liste):
+    # Classe représentant la file des prochains blocs à déposer
+
+    def __init__(self,liste): ### Construction de l'objet file
         self.file=[random.choice(liste) for i in range(4)]
 
-    # Créer un nouveau bloc aléatoire et l'ajoute à la file
-    def filer(self, liste):
+    def filer(self, liste): # Rajoute un bloc a la file (a la fin)
             self.file.append(random.choice(liste))
 
-    # Renvoie le bloc en tête de file et le supprime de la file
-    def defiler(self):
+    def defiler(self): # Supprime le 1er element de la file
         self.file.pop(0)
 
-    # Renvoie la liste des blocs dans la file
-    def relancer(self, liste):
+    def relancer(self, liste): # Reinitialise tt le contenu de la file
         self.file=[random.choice(liste) for i in range(4)]
