@@ -27,6 +27,7 @@ class Jeu:
 
     # Renvoie le score actuel
     def trouverPosition(self, colonne):
+        assert not (colonne < 0 or colonne >= 7)#Si la colonne est invalide ( pas dans la grilles), on ne peut pas trouver de position
         for ligne in range(8, -1, -1):
             if self.grille[ligne][colonne] == "":
                 return ligne
@@ -76,6 +77,7 @@ class Jeu:
 
     # Fait retomber les blocs d'une colonne pour boucher les trous
     def appliquerGravite(self, colonne):
+        assert not (colonne < 0 or colonne >= 7)#Si la colonne est invalide ( pas dans la grilles), on ne peut pas trouver de position
         # On récupère les valeurs de la colonne, du bas vers le haut
         valeurs = []
         for ligne in range(8, -1, -1):

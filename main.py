@@ -204,6 +204,7 @@ def choisirPouvoir(nom):
     if nom == "relancer":
         relancer(listeprochain, listeProba)
         usagesRestants[nom] -= 1
+        assert not any(reste < 0 for reste in usagesRestants.values()) #Le nombre d'utilisations restantes d'un pouvoir ne peut pas être négatif
         afficherInfo("Les prochains blocs ont ete relances !")
         actualiserHaut()
         actualiserProchains()
@@ -273,8 +274,8 @@ def quitter_menu():
 
 # Lancer la fenetre
 def LancerJeu():
-    menu.destroy()
-    fenetre.mainloop()
+    menu.withdraw() #Cache la fenetre menu
+    fenetre.deiconify() #Affiche la fenetre du jeu
 
 # Ecran de fin de partie
 def afficherGameOver():
@@ -295,23 +296,40 @@ def afficherGameOver():
 # Parametrage de la fenêtre menu
 menu = Tk()
 menu.title("Suika 2048")
-menu.geometry("450x425")
+menu.geometry("542x385")
 menu.configure(bg=backgroundColor)
 menu.resizable(0, 0)  # Empeche le redimensionnement de la fenetre
 
+
+fond_image = PhotoImage(file="image.png")
+fond_label = Label(menu, image=fond_image)
+fond_label.place(x=0, y=0, relwidth=1, relheight=1)
+
 # Bouton quitter le menu
 quitterMenu = Button(menu, text="Quitter", bg="#da7037", font=("Verdana", 13, "bold"), fg="#FFFFFF", height=2, bd=0, relief=FLAT, command=quitter_menu)
-quitterMenu.place(x=150, y=150, width=150, height=45)
+quitterMenu.place(x=195, y=150, width=150, height=45)
+
 # Bouton jouer
 jouer = Button(menu, text="Jouer", bg="#da7037", font=("Verdana", 13, "bold"), fg="#FFFFFF", height=2, bd=0, relief=FLAT, command=LancerJeu)
-jouer.place(x=150, y=200, width=150, height=45)
+jouer.place(x=195, y=200, width=150, height=45)
+
+# Affiche le message de bienvenue
+Messagebienvenue=Label(menu, text="Bienvenue dans Suika 2048 !", font=("Verdana", 18, "bold"), bg=backgroundColor, fg="#FFFFFF")
+Messagebienvenue.place(x=75, y=45, width=390, height=45)
+
+# Affiche le noms des créateurs
+nomCreateurs=Label(menu, text="Un jeu developpé par Ruben, Côme et Aésir", font=("Verdana", 12, "bold"), bg=backgroundColor, fg="#FFFFFF")
+nomCreateurs.place(x=75, y=80, width=390, height=45)
+
+
 ################################
 
 
 
 ###########################
 # Parametrage de la fenêtre de jeu
-fenetre = Tk()
+fenetre = Toplevel(menu) #Crée la fenetre de jeu comme fenetre secondaire rattachée a la fenetre menu
+fenetre.withdraw() #Cache la fenêtre de jeu au demarrage
 fenetre.title("Suika 2048")
 fenetre.geometry("950x925")
 fenetre.configure(bg=backgroundColor)
